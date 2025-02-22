@@ -1,0 +1,34 @@
+﻿using gymvenience_backend.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace gymvenience_backend
+{
+    public class ApplicationDbContext : DbContext
+    {
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+        {
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseInMemoryDatabase(databaseName: "GymvenienceDB");
+
+            }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().HasKey(u => u.Id);
+
+            modelBuilder.Entity<Product>().HasKey(b => b.Id);
+        }
+
+        public DbSet<Product> Products { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Purchase> Purchases { get; set; }
+    }
+}
