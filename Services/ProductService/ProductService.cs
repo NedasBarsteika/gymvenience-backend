@@ -16,5 +16,10 @@ namespace gymvenience_backend.Services.ProductService
             var products = await _productRepository.GetFilteredProductsAsync(title, category);
             return products;
         }
+
+        public async Task<Product> GetProductByIdAsync(string productId)
+        {
+            return await _productRepository.GetByIdAsync(productId);
+        }
     }
 }
