@@ -4,7 +4,7 @@ namespace gymvenience_backend.Repositories
 {
     public interface ICartRepository
     {
-        Task<Cart> GetCartByUserIdAsync(int userId);
+        Task<Cart> GetCartByUserIdAsync(string userId);
         Task<Cart> GetCartByIdAsync(int cartId);
         Task<Cart> CreateCartAsync(Cart cart);
         Task<Cart> UpdateCartAsync(Cart cart);

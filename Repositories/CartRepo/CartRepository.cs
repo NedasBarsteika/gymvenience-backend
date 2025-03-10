@@ -13,20 +13,16 @@ namespace gymvenience_backend.Repositories
             _context = context;
         }
 
-    public async Task<Cart> GetCartByUserIdAsync(int userId)
+    public async Task<Cart> GetCartByUserIdAsync(string userId)
     {
     var cart = await _context.Carts
         .Include(c => c.CartItems)
         .ThenInclude(ci => ci.Product)
         .FirstOrDefaultAsync(c => c.UserId == userId);
-
-    if (cart == null)
-        throw new InvalidOperationException("Cart not found for the given user.");
-
+    
     return cart;
     }
-
-        public async Task<Cart> GetCartByIdAsync(int cartId)
+     public async Task<Cart> GetCartByIdAsync(int cartId)
         {
             var cart = await _context.Carts
                 .Include(c => c.CartItems)

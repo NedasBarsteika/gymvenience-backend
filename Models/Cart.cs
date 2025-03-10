@@ -7,7 +7,7 @@ namespace gymvenience_backend.Models
         public int Id { get; set; }
         
         // Foreign key to User
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public User User { get; set; }
         
         // One cart can have many items

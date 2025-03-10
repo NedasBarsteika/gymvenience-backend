@@ -68,6 +68,13 @@ namespace gymvenience_backend.Services.UserService
 
 
             var newUser = new User(Guid.NewGuid().ToString(), name, surname, email, hashedPassword, salt);
+            // Create a cart for the new user
+            var newCart = new Cart
+            {
+               UserId = newUser.Id,
+               CartItems = new List<CartItem>()
+            };
+            Console.WriteLine(newUser.Id);
             await _userRepository.AddAsync(newUser);
             return (Result.Success(), newUser);
         }

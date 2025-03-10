@@ -15,7 +15,7 @@ namespace gymvenience_backend.Services
             _productRepository = productRepository;
         }
 
-        public async Task<Cart> GetOrCreateCartForUserAsync(int userId)
+        public async Task<Cart> GetOrCreateCartForUserAsync(string userId)
         {
             // Attempt to retrieve existing cart
             var cart = await _cartRepository.GetCartByUserIdAsync(userId);
@@ -31,7 +31,7 @@ namespace gymvenience_backend.Services
             return cart;
         }
 
-        public async Task<Cart> AddProductToCartAsync(int userId, string productId, int quantity)
+        public async Task<Cart> AddProductToCartAsync(string userId, string productId, int quantity)
         {
             // Validate product
             var product = await _productRepository.GetByIdAsync(productId);
@@ -62,7 +62,7 @@ namespace gymvenience_backend.Services
             return await _cartRepository.GetCartByIdAsync(cart.Id);
         }
 
-        public async Task<Cart> RemoveProductFromCartAsync(int userId, string productId, int quantity)
+        public async Task<Cart> RemoveProductFromCartAsync(string userId, string productId, int quantity)
         {
             var cart = await _cartRepository.GetCartByUserIdAsync(userId);
             if (cart == null) return null;

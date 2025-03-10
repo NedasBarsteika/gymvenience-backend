@@ -16,21 +16,21 @@ namespace gymvenience_backend.Controllers
         }
 
         [HttpGet("{userId}")]
-        public async Task<IActionResult> GetCart(int userId)
+        public async Task<IActionResult> GetCart(string userId)
         {
             var cart = await _cartService.GetOrCreateCartForUserAsync(userId);
             return Ok(cart);
         }
 
         [HttpPost("{userId}/add")]
-        public async Task<IActionResult> AddProductToCart(int userId, [FromBody] AddProductDto request)
+        public async Task<IActionResult> AddProductToCart(string userId, [FromBody] AddProductDto request)
         {
             var cart = await _cartService.AddProductToCartAsync(userId, request.ProductId, request.Quantity);
             return Ok(cart);
         }
 
         [HttpPost("{userId}/remove")]
-        public async Task<IActionResult> RemoveProductFromCart(int userId, [FromBody] RemoveProductDto request)
+        public async Task<IActionResult> RemoveProductFromCart(string userId, [FromBody] RemoveProductDto request)
         {
             var cart = await _cartService.RemoveProductFromCartAsync(userId, request.ProductId, request.Quantity);
             return Ok(cart);
