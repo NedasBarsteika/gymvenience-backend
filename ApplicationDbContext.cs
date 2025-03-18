@@ -22,9 +22,9 @@ namespace gymvenience_backend
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().HasKey(u => u.Id);
+            //modelBuilder.Entity<User>().HasKey(u => u.Id);
 
-            modelBuilder.Entity<Product>().HasKey(b => b.Id);
+            //modelBuilder.Entity<Product>().HasKey(b => b.Id);
         }
 
         public DbSet<Product> Products { get; set; }

@@ -29,12 +29,10 @@ namespace gymvenience_backend.Repositories.PurchaseRepo
 
         public async Task<List<Purchase>> GetUserPurchasesAsync(string userId)
         {
-            var userPurchases = await _context.Purchases
-                .Include(r => r.PurchasedProduct)
+            return await _context.Purchases
+                .Include(r => r.PurchasedProducts)
                 .Where(r => r.OwnerId == userId)
                 .ToListAsync();
-
-            return userPurchases;
         }
 
         public async Task<bool> IsAlreadyPurchasedAsync(Purchase purchase)
@@ -43,9 +41,9 @@ namespace gymvenience_backend.Repositories.PurchaseRepo
 
             foreach (var res in userPurchases)
             {
-                if (res.PurchasedProduct.Id == purchase.PurchasedProduct.Id)
+                if (res.PurchasedProducts.Any(p => purchase.PurchasedProducts.Any(pp => pp.Id == p.Id)))
                 {
-                    return true;
+                    return true; // Jei bent vienas produktas jau pirktas, grąžiname true
                 }
             }
 

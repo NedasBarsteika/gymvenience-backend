@@ -49,10 +49,11 @@ namespace gymvenience_backend.Controllers
             return _mapper.Map<ProductListView>(requiredProduct);
         }
 
-        [HttpPost("buy/{id}", Name = "BuyProduct")]
+        // Pakeisti su kategorijoms
+        [HttpPost("buy", Name = "BuyProducts")]
         [Authorize]
-        public async Task<ActionResult> BuyProduct(string id,
-                    [FromQuery] string category)
+        public async Task<ActionResult> BuyProducts([FromBody] List<string> productIds,
+                                            [FromQuery] string category)
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
@@ -62,7 +63,7 @@ namespace gymvenience_backend.Controllers
 
             ProductType pCategory = category.ToLower() == "proteinpowder" ? ProductType.ProteinPowder : ProductType.Dumbbells;
 
-            var result = await _userService.AddNewPurchaseAsync(userId, id, pCategory);
+            var result = await _userService.AddNewPurchaseAsync(userId, productIds, pCategory);
             if (!result.IsSuccess)
             {
                 return BadRequest(result.Message);

@@ -6,7 +6,7 @@ namespace gymvenience_backend.Models
     {
         public string Id { get; set; }
         public string OwnerId { get; set; }
-        public Product PurchasedProduct { get; set; }
+        public List<Product> PurchasedProducts { get; set; }
         public ProductType TypeOfProduct { get; set; }
 
         public double TotalPrice
@@ -15,7 +15,10 @@ namespace gymvenience_backend.Models
             {
                 double totalSum = 0;
 
-                totalSum += PurchasedProduct.Price;
+                foreach (Product product in PurchasedProducts) 
+                { 
+                    totalSum += product.Price; 
+                }
 
                 //// Discount
                 //if (DaysToReserve > Constants.SecondLevelDayLimit)
@@ -33,11 +36,11 @@ namespace gymvenience_backend.Models
             }
         }
 
-        public Purchase(string id, string ownerId, Product purchasedProduct, ProductType typeOfProduct)
+        public Purchase(string id, string ownerId, List<Product> purchasedProducts, ProductType typeOfProduct)
         {
             Id = id;
             OwnerId = ownerId;
-            PurchasedProduct = purchasedProduct;
+            PurchasedProducts = purchasedProducts;
             TypeOfProduct = typeOfProduct;
         }
 
