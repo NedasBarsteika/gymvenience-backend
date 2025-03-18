@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using gymvenience_backend.Services;
 using gymvenience_backend.Repositories;
+using DotNetEnv;
 
 namespace gymvenience_backend
 {
@@ -23,7 +24,16 @@ namespace gymvenience_backend
 
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("GymvenienceDB"), ServiceLifetime.Scoped);
+            Env.Load();
+            builder.Configuration
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables();
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+                o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)),
+                ServiceLifetime.Scoped
+            );
 
             var jwtSettings = builder.Configuration.GetSection("Jwt");
             var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
@@ -87,7 +97,7 @@ namespace gymvenience_backend
 
             var scope = app.Services.CreateScope();
             var productRepo = scope.ServiceProvider.GetRequiredService<IProductRepository>();
-            productRepo.GenerateMockProducts();
+            //productRepo.GenerateMockProducts();
 
             app.UseCors("AllowSpecificOrigin");
 
