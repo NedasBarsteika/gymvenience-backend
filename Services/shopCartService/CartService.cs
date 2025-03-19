@@ -1,6 +1,8 @@
 ﻿using gymvenience_backend.Repositories;
 using gymvenience_backend.Models;
 using gymvenience_backend.Repositories.ProductRepo;
+using Sprache;
+using gymvenience_backend.Repositories.OrderRepo;
 
 namespace gymvenience_backend.Services
 {
@@ -8,11 +10,13 @@ namespace gymvenience_backend.Services
     {
         private readonly ICartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public CartService(ICartRepository cartRepository, IProductRepository productRepository)
+        public CartService(ICartRepository cartRepository, IProductRepository productRepository, IOrderRepository orderRepository)
         {
             _cartRepository = cartRepository;
             _productRepository = productRepository;
+            _orderRepository = orderRepository;
         }
 
         public async Task<Cart> GetOrCreateCartForUserAsync(string userId)
@@ -93,6 +97,37 @@ namespace gymvenience_backend.Services
             if (cart == null) return false;
 
             return await _cartRepository.DeleteCartAsync(cart.Id);
+        }
+
+        public async Task<Order> CheckoutAsync(string userId)
+        {
+            // Retrieve cart
+            var cart = await _cartRepository.GetCartByUserIdAsync(userId);
+            if (cart == null || !cart.CartItems.Any())
+            {
+                throw new Exception("Cart is empty");
+            }
+
+            // Create order from cart items
+            var order = new Order
+            {
+                UserId = userId,
+                OrderDate = DateTime.UtcNow,
+                Items = cart.CartItems.Select(ci => new OrderItem
+                {
+                    ProductId = ci.ProductId,
+                    Quantity = ci.Quantity,
+                    Price = _productRepository.GetByIdAsync(ci.ProductId).Result?.Price ?? 0
+                }).ToList()
+            };
+
+            // Save order
+            await _orderRepository.CreateOrderAsync(order);
+
+            // Clear cart after order creation
+            await _cartRepository.DeleteCartAsync(cart.Id);
+
+            return order;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using gymvenience_backend.Common;
 using gymvenience_backend.Models;
 using gymvenience_backend.Repositories.ProductRepo;
-using gymvenience_backend.Repositories.PurchaseRepo;
+using gymvenience_backend.Repositories.OrderRepo;
 using gymvenience_backend.Repositories.UserRepo;
 using gymvenience_backend.Services.AuthService;
 using gymvenience_backend.Services.ProductService;
@@ -13,47 +13,47 @@ namespace gymvenience_backend.Services.UserService
     {
         private readonly IUserRepository _userRepository;
         private readonly IProductRepository _productRepository;
-        private readonly IPurchaseRepository _purchaseRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IPasswordService _passwordService;
         private readonly IAuthService _authService;
 
-        public UserService(IUserRepository userRepository, IPasswordService passwordService, IAuthService authService, IProductRepository productRepository, IPurchaseRepository purchaseRepository)
+        public UserService(IUserRepository userRepository, IPasswordService passwordService, IAuthService authService, IProductRepository productRepository, IOrderRepository orderRepository)
         {
             _userRepository = userRepository;
             _productRepository = productRepository;
-            _purchaseRepository = purchaseRepository;
+            _orderRepository = orderRepository;
             _passwordService = passwordService;
             _authService = authService;
         }
 
-        public async Task<Result> AddNewPurchaseAsync(string userId, List<string> productIds, ProductType category)
-        {
-            // Check if user exists
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null)
-            {
-                return Result.Failure("User with specified id does not exist");
-            }
+        //public async Task<Result> AddNewPurchaseAsync(string userId, List<string> productIds, ProductType category)
+        //{
+        //    // Check if user exists
+        //    var user = await _userRepository.GetByIdAsync(userId);
+        //    if (user == null)
+        //    {
+        //        return Result.Failure("User with specified id does not exist");
+        //    }
 
-            var purchasedProducts = new List<Product>();
-            foreach (var productId in productIds)
-            {
-                var product = await _productRepository.GetByIdAsync(productId);
-                if (product != null)
-                {
-                    purchasedProducts.Add(product);
-                }
-            }
+        //    var purchasedProducts = new List<Product>();
+        //    foreach (var productId in productIds)
+        //    {
+        //        var product = await _productRepository.GetByIdAsync(productId);
+        //        if (product != null)
+        //        {
+        //            purchasedProducts.Add(product);
+        //        }
+        //    }
 
-            if (!purchasedProducts.Any())
-            {
-                return Result.Failure("No valid products found for purchase");
-            }
+        //    if (!purchasedProducts.Any())
+        //    {
+        //        return Result.Failure("No valid products found for purchase");
+        //    }
 
-            var newPurchase = new Purchase(Guid.NewGuid().ToString(), userId, purchasedProducts, category);
-            await _purchaseRepository.AddNewPurchaseAsync(newPurchase);
-            return Result.Success();
-        }
+        //    var newPurchase = new Order(Guid.NewGuid().ToString(), userId, purchasedProducts, category);
+        //    await _purchaseRepository.AddNewPurchaseAsync(newPurchase);
+        //    return Result.Success();
+        //}
 
         public async Task<(Result, User?)> CreateUserAsync(string name, string surname, string email, string password)
         {
@@ -103,7 +103,7 @@ namespace gymvenience_backend.Services.UserService
             return (Result.Success(), _authService.GenerateJwtToken(user));
         }
 
-        public async Task<(Result, List<Purchase>?)> GetAllPurchasesAsync(string userId)
+        public async Task<(Result, List<Order>?)> GetAllOrdersAsync(string userId)
         {
             // Checking if user exists
             var user = await _userRepository.GetByIdAsync(userId);
@@ -112,8 +112,8 @@ namespace gymvenience_backend.Services.UserService
                 return (Result.Failure("User with given id does not exist"), null);
             }
 
-            var userPurchases = await _purchaseRepository.GetUserPurchasesAsync(userId);
-            return (Result.Success(), userPurchases);
+            var userOrders = await _orderRepository.GetUserOrdersAsync(userId);
+            return (Result.Success(), userOrders);
         }
 
         public bool IsPasswordCorrect(string password, string storedHashedPassword, string storedSalt)

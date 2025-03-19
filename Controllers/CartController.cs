@@ -43,6 +43,16 @@ namespace gymvenience_backend.Controllers
             if (!success) return NotFound();
             return NoContent();
         }
+
+        [HttpPost("checkout/{userId}")]
+        public async Task<IActionResult> Checkout(string userId)
+        {
+            var order = await _cartService.CheckoutAsync(userId);
+
+            if (order == null) return BadRequest("Checkout failed.");
+
+            return Ok(order);
+        }
     }
 }
 

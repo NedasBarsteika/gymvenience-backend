@@ -10,7 +10,7 @@ namespace gymvenience_backend.MapperProfiles
         {
             CreateMap<Product, ProductDetailedView>();
             CreateMap<Product, ProductListView>();
-            CreateMap<Purchase, PurchaseListView>();
+            CreateMap<Order, OrderListView>();
         }
 
     }

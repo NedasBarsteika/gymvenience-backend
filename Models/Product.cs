@@ -16,17 +16,5 @@
 
         public string CoverImageUrl { get; set; }
 
-        //public Product(string id, string name, string description, string category, int quantity, double price, string coverImageUrl)
-        //{
-        //    Id = id;
-        //    Name = name;
-        //    Description = description;
-        //    Category = category;
-        //    Quantity = quantity;
-        //    Price = price;
-        //    CoverImageUrl = coverImageUrl;
-        //}
-
-        //public Product() { }
     }
 }

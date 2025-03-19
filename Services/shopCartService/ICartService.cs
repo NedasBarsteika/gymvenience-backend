@@ -7,5 +7,6 @@ namespace gymvenience_backend.Services
         Task<Cart> AddProductToCartAsync(string userId, string productId, int quantity);
         Task<Cart> RemoveProductFromCartAsync(string userId, string productId);
         Task<bool> ClearCartByUserIdAsync(string userId);
+        Task<Order> CheckoutAsync(string userId);
     }
 }

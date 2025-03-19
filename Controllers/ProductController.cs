@@ -49,55 +49,6 @@ namespace gymvenience_backend.Controllers
             return _mapper.Map<ProductListView>(requiredProduct);
         }
 
-        // Pakeisti su kategorijoms
-        [HttpPost("buy", Name = "BuyProducts")]
-        [Authorize]
-        public async Task<ActionResult> BuyProducts([FromBody] List<string> productIds,
-                                            [FromQuery] string category)
-        {
-            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return Unauthorized("Authentication credentials were not found");
-            }
-
-            ProductType pCategory = category.ToLower() == "proteinpowder" ? ProductType.ProteinPowder : ProductType.Dumbbells;
-
-            var result = await _userService.AddNewPurchaseAsync(userId, productIds, pCategory);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Message);
-            }
-            return Ok();
-        }
-
-        [HttpGet("purchases", Name = "GetPurchasedProducts")]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<ProductListView>>> GetPurchasedProducts()
-        {
-            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return Unauthorized("Authentication credentials were not found");
-            }
-
-            if (IsTokenExpired())
-            {
-                return Unauthorized("Token has expired. Please reauthenticate.");
-            }
-
-            var (result, purchasedUserProducts) = await _userService.GetAllPurchasesAsync(userId);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Message);
-            }
-
-            var sanitizedProductList = _mapper.Map<IEnumerable<PurchaseListView>>(purchasedUserProducts);
-
-            return Ok(sanitizedProductList);
-        }
-
-
         [HttpGet("search", Name = "GetSearchResults")]
         public async Task<IEnumerable<ProductListView>> GetSearchResults(
                     [FromQuery] string? search = null,
@@ -117,26 +68,5 @@ namespace gymvenience_backend.Controllers
             var sanitizedProductList = _mapper.Map<IEnumerable<ProductListView>>(requiredProducts);
             return sanitizedProductList;
         }
-
-
-        private bool IsTokenExpired()
-        {
-            var expirationClaim = HttpContext.User.FindFirstValue("exp");
-            if (expirationClaim == null)
-            {
-                return true;
-            }
-
-            var expirationTime = DateTimeOffset.FromUnixTimeSeconds(long.Parse(expirationClaim));
-            var currentTime = DateTimeOffset.UtcNow;
-
-            if (expirationTime <= currentTime)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
     }
 }

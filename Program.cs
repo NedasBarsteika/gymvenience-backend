@@ -1,6 +1,6 @@
 using gymvenience_backend.MapperProfiles;
 using gymvenience_backend.Repositories.ProductRepo;
-using gymvenience_backend.Repositories.PurchaseRepo;
+using gymvenience_backend.Repositories.OrderRepo;
 using gymvenience_backend.Repositories.UserRepo;
 using gymvenience_backend.Services.AuthService;
 using gymvenience_backend.Services.ProductService;
@@ -14,6 +14,7 @@ using System.Text;
 using gymvenience_backend.Services;
 using gymvenience_backend.Repositories;
 using DotNetEnv;
+using gymvenience_backend.Services.OrderService;
 
 namespace gymvenience_backend
 {
@@ -82,7 +83,7 @@ namespace gymvenience_backend
 
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddAutoMapper(typeof(ProductMapperProfile));
             builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
@@ -91,6 +92,7 @@ namespace gymvenience_backend
             builder.Services.AddScoped<IPasswordService, PasswordService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
 
 
             var app = builder.Build();
