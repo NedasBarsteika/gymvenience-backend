@@ -1,13 +1,13 @@
-using gymvenience_backend.Repositories;
+﻿using gymvenience_backend.Repositories;
 using gymvenience_backend.Models;
-using gymvenience_backend.Repositories.ProductRepo;    
+using gymvenience_backend.Repositories.ProductRepo;
 
 namespace gymvenience_backend.Services
 {
     public class CartService : ICartService
     {
         private readonly ICartRepository _cartRepository;
-        private readonly IProductRepository _productRepository; 
+        private readonly IProductRepository _productRepository;
 
         public CartService(ICartRepository cartRepository, IProductRepository productRepository)
         {
@@ -43,9 +43,20 @@ namespace gymvenience_backend.Services
 
             // Check if item already in cart
             var existingItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+
+            if (quantity <= 0 && existingItem != null)
+            {
+                await _cartRepository.RemoveCartItemAsync(existingItem.Id);
+                return await _cartRepository.GetCartByIdAsync(cart.Id);
+            }
+            if (quantity <= 0)
+            {
+                return await _cartRepository.GetCartByIdAsync(cart.Id);
+            }
+
             if (existingItem != null)
             {
-                existingItem.Quantity += quantity;
+                existingItem.Quantity = quantity;
             }
             else
             {
@@ -62,7 +73,7 @@ namespace gymvenience_backend.Services
             return await _cartRepository.GetCartByIdAsync(cart.Id);
         }
 
-        public async Task<Cart> RemoveProductFromCartAsync(string userId, string productId, int quantity)
+        public async Task<Cart> RemoveProductFromCartAsync(string userId, string productId)
         {
             var cart = await _cartRepository.GetCartByUserIdAsync(userId);
             if (cart == null) return null;
@@ -70,24 +81,18 @@ namespace gymvenience_backend.Services
             var existingItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
             if (existingItem == null) return cart; // product not in cart, nothing to remove
 
-        existingItem.Quantity -= quantity;
-        if (existingItem.Quantity <= 0)
-        {
-            // remove item entirely
+            existingItem.Quantity = 0;
             await _cartRepository.RemoveCartItemAsync(existingItem.Id);
-        }
-        else
-        {
-            // update existing cart item using the repository method
-            await _cartRepository.UpdateCartItemAsync(existingItem);
-        }
 
             return await _cartRepository.GetCartByIdAsync(cart.Id);
         }
 
-        public async Task<bool> ClearCartAsync(int cartId)
+        public async Task<bool> ClearCartByUserIdAsync(string userId)
         {
-            return await _cartRepository.DeleteCartAsync(cartId);
+            var cart = await _cartRepository.GetCartByUserIdAsync(userId);
+            if (cart == null) return false;
+
+            return await _cartRepository.DeleteCartAsync(cart.Id);
         }
     }
 }

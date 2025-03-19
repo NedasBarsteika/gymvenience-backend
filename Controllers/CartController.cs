@@ -32,14 +32,14 @@ namespace gymvenience_backend.Controllers
         [HttpPost("{userId}/remove")]
         public async Task<IActionResult> RemoveProductFromCart(string userId, [FromBody] RemoveProductDto request)
         {
-            var cart = await _cartService.RemoveProductFromCartAsync(userId, request.ProductId, request.Quantity);
+            var cart = await _cartService.RemoveProductFromCartAsync(userId, request.ProductId);
             return Ok(cart);
         }
 
-        [HttpDelete("{cartId}")]
-        public async Task<IActionResult> ClearCart(int cartId)
+        [HttpDelete("{userId}/delete")]
+        public async Task<IActionResult> ClearCart(string userId)
         {
-            var success = await _cartService.ClearCartAsync(cartId);
+            var success = await _cartService.ClearCartByUserIdAsync(userId);
             if (!success) return NotFound();
             return NoContent();
         }

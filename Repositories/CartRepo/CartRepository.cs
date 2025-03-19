@@ -13,20 +13,18 @@ namespace gymvenience_backend.Repositories
             _context = context;
         }
 
-    public async Task<Cart> GetCartByUserIdAsync(string userId)
-    {
-    var cart = await _context.Carts
-        .Include(c => c.CartItems)
-        .ThenInclude(ci => ci.Product)
-        .FirstOrDefaultAsync(c => c.UserId == userId);
-    
-    return cart;
-    }
-     public async Task<Cart> GetCartByIdAsync(int cartId)
+        public async Task<Cart> GetCartByUserIdAsync(string userId)
         {
             var cart = await _context.Carts
                 .Include(c => c.CartItems)
-                .ThenInclude(ci => ci.Product)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            return cart;
+        }
+        public async Task<Cart> GetCartByIdAsync(int cartId)
+        {
+            var cart = await _context.Carts
+                .Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.Id == cartId);
 
             if (cart == null)
