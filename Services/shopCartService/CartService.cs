@@ -108,26 +108,56 @@ namespace gymvenience_backend.Services
                 throw new Exception("Cart is empty");
             }
 
+            // Retrieve all products in cart
+            var productIds = cart.CartItems.Select(ci => ci.ProductId).ToList();
+            var products = await _productRepository.GetByIdsAsync(productIds);
+
             // Create order from cart items
+            var orderItems = new List<OrderItem>();
+
+            foreach (var cartItem in cart.CartItems)
+            {
+                var product = products.FirstOrDefault(p => p.Id == cartItem.ProductId);
+                if (product == null)
+                {
+                    throw new Exception($"Product {cartItem.ProductId} not found");
+                }
+
+                // Check if ordered quantity exceeds available stock
+                if (cartItem.Quantity > product.Quantity)
+                {
+                    throw new Exception($"Not enough stock for {product.Name}. Available: {product.Quantity}, Requested: {cartItem.Quantity}");
+                }
+
+                // Deduct stock quantity
+                product.Quantity -= cartItem.Quantity;
+                await _productRepository.UpdateAsync(product);
+
+                // Add to order
+                orderItems.Add(new OrderItem
+                {
+                    ProductId = cartItem.ProductId,
+                    Quantity = cartItem.Quantity,
+                    Price = product.Price
+                });
+            }
+
+            // Create order
             var order = new Order
             {
                 UserId = userId,
                 OrderDate = DateTime.UtcNow,
-                Items = cart.CartItems.Select(ci => new OrderItem
-                {
-                    ProductId = ci.ProductId,
-                    Quantity = ci.Quantity,
-                    Price = _productRepository.GetByIdAsync(ci.ProductId).Result?.Price ?? 0
-                }).ToList()
+                Items = orderItems
             };
 
             // Save order
             await _orderRepository.CreateOrderAsync(order);
 
-            // Clear cart after order creation
+            // Clear cart after successful order
             await _cartRepository.DeleteCartAsync(cart.Id);
 
             return order;
         }
+
     }
 }

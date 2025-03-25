@@ -6,6 +6,8 @@ namespace gymvenience_backend.Repositories.ProductRepo
     {
         public Task<List<Product>> GetAllAsync();
         public Task<Product?> GetByIdAsync(string id);
+        Task<IEnumerable<Product>> GetByIdsAsync(List<string> productIds);
+        Task UpdateAsync(Product product);
         public Task<List<Product>> GetFilteredProductsAsync(string title, string category);
         void GenerateMockProducts();
     }
