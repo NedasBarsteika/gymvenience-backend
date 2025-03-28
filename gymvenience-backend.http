@@ -1,6 +1,0 @@
-@gymvenience_backend_HostAddress = http://localhost:5165
-
-GET {{gymvenience_backend_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

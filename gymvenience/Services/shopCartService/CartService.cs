@@ -42,6 +42,9 @@ namespace gymvenience_backend.Services
             if (product == null)
                 throw new Exception("Product not found");
 
+            if (quantity > product.Quantity)
+                throw new Exception($"This product has {product.Quantity} items in stock. Please enter a valid quantity");
+
             // Get or create cart
             var cart = await GetOrCreateCartForUserAsync(userId);
 
