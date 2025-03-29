@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using gymvenience_backend.DTOs;
 using gymvenience_backend.Repositories.ProductRepo;
+using gymvenience_backend.Repositories.UserRepo;
 using gymvenience_backend.Services.UserService;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +12,12 @@ namespace gymvenience_backend.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IUserRepository _userRepository;
 
-        public UserController(IUserService userService, IMapper mapper)
+        public UserController(IUserService userService, IUserRepository userRepository, IMapper mapper)
         {
             _userService = userService;
+            _userRepository = userRepository;
         }
 
         [HttpPost("register", Name = "RegisterNewUser")]
@@ -41,11 +44,10 @@ namespace gymvenience_backend.Controllers
         }
 
         [HttpPost("login", Name = "LoginUser")]
-        public async Task<ActionResult<string>> LoginUser([FromBody] UserLoginDto userLoginDto)
+        public async Task<ActionResult<object>> LoginUser([FromBody] UserLoginDto userLoginDto)
         {
             string email = userLoginDto.Email;
             string password = userLoginDto.Password;
-
 
             var (res, jwtToken) = await _userService.GenerateJwtAsync(email, password);
             if (!res.IsSuccess)
@@ -53,7 +55,17 @@ namespace gymvenience_backend.Controllers
                 return BadRequest(res.Message);
             }
 
-            return Ok(jwtToken);
+            var user = await _userRepository.GetByEmailAsync(email);
+            if (user == null)
+            {
+                return BadRequest("User not found.");
+            }
+
+            return Ok(new
+            {
+                Token = jwtToken,
+                User = user
+            });
         }
     }
 }
