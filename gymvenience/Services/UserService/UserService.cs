@@ -26,35 +26,6 @@ namespace gymvenience_backend.Services.UserService
             _authService = authService;
         }
 
-        //public async Task<Result> AddNewPurchaseAsync(string userId, List<string> productIds, ProductType category)
-        //{
-        //    // Check if user exists
-        //    var user = await _userRepository.GetByIdAsync(userId);
-        //    if (user == null)
-        //    {
-        //        return Result.Failure("User with specified id does not exist");
-        //    }
-
-        //    var purchasedProducts = new List<Product>();
-        //    foreach (var productId in productIds)
-        //    {
-        //        var product = await _productRepository.GetByIdAsync(productId);
-        //        if (product != null)
-        //        {
-        //            purchasedProducts.Add(product);
-        //        }
-        //    }
-
-        //    if (!purchasedProducts.Any())
-        //    {
-        //        return Result.Failure("No valid products found for purchase");
-        //    }
-
-        //    var newPurchase = new Order(Guid.NewGuid().ToString(), userId, purchasedProducts, category);
-        //    await _purchaseRepository.AddNewPurchaseAsync(newPurchase);
-        //    return Result.Success();
-        //}
-
         public async Task<(Result, User?)> CreateUserAsync(string name, string surname, string email, string password)
         {
             // Validate password strength

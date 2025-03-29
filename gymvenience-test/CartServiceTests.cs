@@ -7,7 +7,7 @@ using gymvenience_backend.Models;
 using gymvenience_backend.Repositories.ProductRepo;
 using gymvenience_backend.Repositories.OrderRepo;
 
-namespace gymvenienceTest
+namespace gymvenience_test
 {
     public class CartServiceTest
     {
