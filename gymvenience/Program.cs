@@ -6,6 +6,7 @@ using gymvenience_backend.Services.AuthService;
 using gymvenience_backend.Services.ProductService;
 using gymvenience_backend.Services.PasswordService;
 using gymvenience_backend.Services.UserService;
+using gymvenience_backend.Services.StripeService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
@@ -15,7 +16,7 @@ using gymvenience_backend.Services;
 using gymvenience_backend.Repositories;
 using DotNetEnv;
 using gymvenience_backend.Services.OrderService;
-
+using Stripe;
 namespace gymvenience_backend
 {
     public class Program
@@ -24,7 +25,7 @@ namespace gymvenience_backend
         {
 
             var builder = WebApplication.CreateBuilder(args);
-
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
             Env.Load();
             builder.Configuration
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -33,7 +34,7 @@ namespace gymvenience_backend
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
                 o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)),
-                ServiceLifetime.Scoped
+                 ServiceLifetime.Scoped
             );
 
             var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -91,7 +92,8 @@ namespace gymvenience_backend
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IPasswordService, PasswordService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
-            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IProductService, gymvenience_backend.Services.ProductService.ProductService>();
+            builder.Services.AddScoped<IStripeService, StripeService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
 
 
