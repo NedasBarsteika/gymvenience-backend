@@ -6,6 +6,8 @@ using gymvenience_backend.Services.UserService;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using gymvenience_backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace gymvenience_backend.Controllers
 {
@@ -119,7 +121,13 @@ namespace gymvenience_backend.Controllers
             bio = user.Bio 
         });
     }
-}
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetTrainers()
+        {
+            return await _context.Users.Where(u => u.IsTrainer).ToListAsync();
+        }
+    }
 
 public class UpdateProfileDto
 {

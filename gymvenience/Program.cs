@@ -17,6 +17,8 @@ using gymvenience_backend.Repositories;
 using DotNetEnv;
 using gymvenience_backend.Services.OrderService;
 using Stripe;
+using gymvenience.Services.ReservationService;
+using gymvenience_backend.Repositories.ReservationRepo;
 namespace gymvenience_backend
 {
     public class Program
@@ -95,6 +97,8 @@ namespace gymvenience_backend
             builder.Services.AddScoped<IProductService, gymvenience_backend.Services.ProductService.ProductService>();
             builder.Services.AddScoped<IStripeService, StripeService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+            builder.Services.AddScoped<IReservationService, ReservationService>();
 
 
             var app = builder.Build();

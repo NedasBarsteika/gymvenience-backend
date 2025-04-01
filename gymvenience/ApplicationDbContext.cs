@@ -1,4 +1,5 @@
-﻿using gymvenience_backend.Models;
+﻿using gymvenience.Models;
+using gymvenience_backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace gymvenience_backend
@@ -29,7 +30,7 @@ namespace gymvenience_backend
         public DbSet<User> Users { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
-
+        public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Order> Orders { get; set; }
     }
 }

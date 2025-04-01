@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using gymvenience_backend.Services;
 using gymvenience_backend.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace gymvenience_backend.Controllers
 {
@@ -45,8 +47,18 @@ namespace gymvenience_backend.Controllers
         }
 
         [HttpPost("checkout/{userId}")]
+        [Authorize]
         public async Task<IActionResult> Checkout(string userId)
         {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+
+            if (jwtToken == null || jwtToken.ValidTo < System.DateTime.UtcNow)
+            {
+                return Unauthorized("JWT token is expired or invalid");
+            }
+
             var order = await _cartService.CheckoutAsync(userId);
 
             if (order == null) return BadRequest("Checkout failed.");

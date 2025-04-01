@@ -10,7 +10,9 @@
         public string Salt { get; set; } = string.Empty;
         public bool IsAdmin { get; set; } = false;
         public bool IsTrainer { get; set; } = false; 
-        public string Bio { get; set; } = string.Empty; 
+        public string Bio { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
+        public float Rating { get; set; } = 0.0f;
         public List<Product> PurchasedProducts { get; set; }
 
         public User()
