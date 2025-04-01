@@ -1,4 +1,6 @@
-﻿namespace gymvenience_backend.Models
+﻿using gymvenience.Models;
+
+namespace gymvenience_backend.Models
 {
     public class User
     {
@@ -14,6 +16,7 @@
         public string ImageUrl { get; set; } = string.Empty;
         public float Rating { get; set; } = 0.0f;
         public List<Product> PurchasedProducts { get; set; }
+        public List<Reservation> Reservations { get; set; }
 
         public User()
         {
@@ -27,6 +30,7 @@
             IsTrainer = false;
             Bio = string.Empty;
             PurchasedProducts = new List<Product>();
+            Reservations = new List<Reservation>();
         }
 
         // Optional: Extend your parameterized constructor if needed
@@ -42,6 +46,7 @@
             IsTrainer = false;
             Bio = "";
             PurchasedProducts = new List<Product>();
+            Reservations = new List<Reservation>();
         }
     }
 }

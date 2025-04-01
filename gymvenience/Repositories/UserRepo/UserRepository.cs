@@ -1,4 +1,5 @@
-﻿using gymvenience_backend.Models;
+﻿using gymvenience.Models;
+using gymvenience_backend.Models;
 using gymvenience_backend.Repositories.UserRepo;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,5 +32,20 @@ namespace gymvenience_backend.Repositories.UserRepo
             await _context.SaveChangesAsync();
         }
 
+        public async Task<User?> UpdateUserAsync(string userId, UserProfileDto updatedProfile)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null) return null;
+
+            // Update fields
+            user.Bio = updatedProfile.Bio;
+            user.IsTrainer = updatedProfile.IsTrainer;
+            // ... update other fields as needed
+
+            await _context.SaveChangesAsync();
+            return user;
+        }
     }
 }

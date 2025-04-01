@@ -19,7 +19,7 @@ namespace gymvenience_backend.Controllers
         private readonly IUserRepository _userRepository;
         private readonly ApplicationDbContext _context;
 
-        public UserController(IUserService userService, IUserRepository userRepository,ApplicationDbContext context, IMapper mapper)
+        public UserController(IUserService userService, IUserRepository userRepository, ApplicationDbContext context, IMapper mapper)
         {
             _userService = userService;
             _userRepository = userRepository;
@@ -73,64 +73,65 @@ namespace gymvenience_backend.Controllers
                 User = user
             });
         }
-    // GET /api/user/me
-    [HttpGet("me")]
-    public IActionResult GetMyProfile()
-    {
-        // Token validation means we have a ClaimsPrincipal in HttpContext.User
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        if (userId == null)
-            return Unauthorized("No user ID in token.");
+        // GET /api/user/me
+        [HttpGet("me")]
+        public IActionResult GetMyProfile()
+        {
+            // Token validation means we have a ClaimsPrincipal in HttpContext.User
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-        if (user == null)
-            return NotFound("User not found.");
+            if (userId == null)
+                return Unauthorized("No user ID in token.");
 
-        // Return the user data (e.g., an object with id, bio, etc.)
-        return Ok(new 
-        { 
-            id = user.Id,
-            bio = user.Bio
-        });
-    }
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+                return NotFound("User not found.");
 
-    // PUT /api/user/me
-    [HttpPut("me")]
-    public IActionResult UpdateMyProfile([FromBody] UpdateProfileDto updateDto)
-    {
-        // Once again, we identify the user from the token
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null)
-            return Unauthorized("No user ID in token.");
+            // Return the user data (e.g., an object with id, bio, etc.)
+            return Ok(new
+            {
+                id = user.Id,
+                bio = user.Bio
+            });
+        }
 
-        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-        if (user == null)
-            return NotFound("User not found.");
+        // PUT /api/user/me
+        [HttpPut("me")]
+        public IActionResult UpdateMyProfile([FromBody] UpdateProfileDto updateDto)
+        {
+            // Once again, we identify the user from the token
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized("No user ID in token.");
 
-        // Update fields
-        user.Bio = updateDto.Bio;
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+                return NotFound("User not found.");
 
-        // Save changes
-        _context.SaveChanges();
+            // Update fields
+            user.Bio = updateDto.Bio;
 
-        // Return the updated user
-        return Ok(new 
-        { 
-            id = user.Id, 
-            bio = user.Bio 
-        });
-    }
+            // Save changes
+            _context.SaveChanges();
 
-        [HttpGet]
+            // Return the updated user
+            return Ok(new
+            {
+                id = user.Id,
+                bio = user.Bio
+            });
+        }
+
+        [HttpGet("trainers")]
         public async Task<ActionResult<IEnumerable<User>>> GetTrainers()
         {
             return await _context.Users.Where(u => u.IsTrainer).ToListAsync();
         }
     }
 
-public class UpdateProfileDto
-{
-    public string Bio { get; set; }
-}
+    public class UpdateProfileDto
+    {
+        public string Bio { get; set; }
+    }
 }

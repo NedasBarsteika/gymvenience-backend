@@ -12,8 +12,8 @@ public class ReservationController : ControllerBase
         _reservationService = reservationService;
     }
 
-    [HttpGet("user/{userId}")]
-    public IActionResult GetUserReservations(int userId)
+    [HttpGet("{userId}")]
+    public IActionResult GetUserReservations(string userId)
     {
         var reservations = _reservationService.GetUserReservations(userId);
         if (!reservations.Any())

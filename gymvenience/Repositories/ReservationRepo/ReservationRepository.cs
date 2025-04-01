@@ -11,7 +11,7 @@ public class ReservationRepository : IReservationRepository
         _context = context;
     }
 
-    public IEnumerable<Reservation> GetUserReservations(int userId)
+    public IEnumerable<Reservation> GetUserReservations(string userId)
     {
         return _context.Reservations.Where(r => r.UserId == userId).ToList();
     }

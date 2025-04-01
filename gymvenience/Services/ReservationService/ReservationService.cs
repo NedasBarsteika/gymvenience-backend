@@ -11,7 +11,7 @@ public class ReservationService : IReservationService
         _reservationRepository = reservationRepository;
     }
 
-    public IEnumerable<Reservation> GetUserReservations(int userId)
+    public IEnumerable<Reservation> GetUserReservations(string userId)
     {
         return _reservationRepository.GetUserReservations(userId);
     }

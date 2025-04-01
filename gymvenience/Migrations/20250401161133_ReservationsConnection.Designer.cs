@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using gymvenience_backend;
 
@@ -11,9 +12,11 @@ using gymvenience_backend;
 namespace gymvenience_backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250401161133_ReservationsConnection")]
+    partial class ReservationsConnection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,17 +46,14 @@ namespace gymvenience_backend.Migrations
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
 
-                    b.Property<string>("TrainerId")
+                    b.Property<string>("Trainer")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Reservations");
                 });
@@ -232,15 +232,6 @@ namespace gymvenience_backend.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("gymvenience.Models.Reservation", b =>
-                {
-                    b.HasOne("gymvenience_backend.Models.User", null)
-                        .WithMany("Reservations")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("gymvenience_backend.Models.CartItem", b =>
                 {
                     b.HasOne("gymvenience_backend.Models.Cart", null)
@@ -279,8 +270,6 @@ namespace gymvenience_backend.Migrations
             modelBuilder.Entity("gymvenience_backend.Models.User", b =>
                 {
                     b.Navigation("PurchasedProducts");
-
-                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }

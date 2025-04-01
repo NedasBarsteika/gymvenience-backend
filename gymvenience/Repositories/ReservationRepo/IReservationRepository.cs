@@ -5,6 +5,6 @@ namespace gymvenience_backend.Repositories.ReservationRepo
 {
     public interface IReservationRepository
     {
-        public IEnumerable<Reservation> GetUserReservations(int userId);
+        public IEnumerable<Reservation> GetUserReservations(string userId);
     }
 }
