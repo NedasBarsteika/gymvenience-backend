@@ -6,6 +6,7 @@ using gymvenience_backend.Repositories.UserRepo;
 using gymvenience_backend.Services.AuthService;
 using gymvenience_backend.Services.ProductService;
 using gymvenience_backend.Services.PasswordService;
+using Microsoft.EntityFrameworkCore;
 
 namespace gymvenience_backend.Services.UserService
 {
@@ -17,13 +18,17 @@ namespace gymvenience_backend.Services.UserService
         private readonly IPasswordService _passwordService;
         private readonly IAuthService _authService;
 
-        public UserService(IUserRepository userRepository, IPasswordService passwordService, IAuthService authService, IProductRepository productRepository, IOrderRepository orderRepository)
+        private readonly ApplicationDbContext _context;
+
+        public UserService(IUserRepository userRepository, IPasswordService passwordService, IAuthService authService, IProductRepository productRepository, IOrderRepository orderRepository,ApplicationDbContext context)
         {
             _userRepository = userRepository;
             _productRepository = productRepository;
             _orderRepository = orderRepository;
             _passwordService = passwordService;
             _authService = authService;
+            _context = context;
+
         }
 
         public async Task<(Result, User?)> CreateUserAsync(string name, string surname, string email, string password)
@@ -91,6 +96,27 @@ namespace gymvenience_backend.Services.UserService
         {
             var hashedInputPassword = _passwordService.HashPassword(password, storedSalt);
             return hashedInputPassword == storedHashedPassword;
+        }
+          public async Task<User> GetUserByIdAsync(string userId)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId);
+        }
+
+        public async Task<User> UpdateUserAsync(string userId, UserProfileDto updatedProfile)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null) return null;
+
+            // Update fields
+            user.Bio = updatedProfile.Bio;
+            user.IsTrainer = updatedProfile.IsTrainer;
+            // ... update other fields as needed
+
+            await _context.SaveChangesAsync();
+            return user;
         }
     }
 }

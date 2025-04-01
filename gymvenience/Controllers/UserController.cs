@@ -4,6 +4,8 @@ using gymvenience_backend.Repositories.ProductRepo;
 using gymvenience_backend.Repositories.UserRepo;
 using gymvenience_backend.Services.UserService;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace gymvenience_backend.Controllers
 {
@@ -13,11 +15,13 @@ namespace gymvenience_backend.Controllers
     {
         private readonly IUserService _userService;
         private readonly IUserRepository _userRepository;
+        private readonly ApplicationDbContext _context;
 
-        public UserController(IUserService userService, IUserRepository userRepository, IMapper mapper)
+        public UserController(IUserService userService, IUserRepository userRepository,ApplicationDbContext context, IMapper mapper)
         {
             _userService = userService;
             _userRepository = userRepository;
+            _context = context;
         }
 
         [HttpPost("register", Name = "RegisterNewUser")]
@@ -67,5 +71,58 @@ namespace gymvenience_backend.Controllers
                 User = user
             });
         }
+    // GET /api/user/me
+    [HttpGet("me")]
+    public IActionResult GetMyProfile()
+    {
+        // Token validation means we have a ClaimsPrincipal in HttpContext.User
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId == null)
+            return Unauthorized("No user ID in token.");
+
+        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+        if (user == null)
+            return NotFound("User not found.");
+
+        // Return the user data (e.g., an object with id, bio, etc.)
+        return Ok(new 
+        { 
+            id = user.Id,
+            bio = user.Bio
+        });
     }
+
+    // PUT /api/user/me
+    [HttpPut("me")]
+    public IActionResult UpdateMyProfile([FromBody] UpdateProfileDto updateDto)
+    {
+        // Once again, we identify the user from the token
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+            return Unauthorized("No user ID in token.");
+
+        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+        if (user == null)
+            return NotFound("User not found.");
+
+        // Update fields
+        user.Bio = updateDto.Bio;
+
+        // Save changes
+        _context.SaveChanges();
+
+        // Return the updated user
+        return Ok(new 
+        { 
+            id = user.Id, 
+            bio = user.Bio 
+        });
+    }
+}
+
+public class UpdateProfileDto
+{
+    public string Bio { get; set; }
+}
 }
