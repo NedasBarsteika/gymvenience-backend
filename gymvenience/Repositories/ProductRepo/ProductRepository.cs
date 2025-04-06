@@ -81,7 +81,7 @@ namespace gymvenience_backend.Repositories.ProductRepo
 
             if (category.ToLower() != "any")
             {
-                products = products.Where(b => b.Category.ToLower() == category).ToList();
+                products = products.Where(b => b.Category.Trim().ToLower() == category.Trim().ToLower()).ToList();
             }
 
             return products;

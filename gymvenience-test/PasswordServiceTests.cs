@@ -1,9 +1,6 @@
-﻿using gymvenience_backend.Services.PasswordService;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Xunit;
+using FluentAssertions;
+using gymvenience_backend.Services.PasswordService;
 
 namespace gymvenience_test
 {
@@ -20,8 +17,9 @@ namespace gymvenience_test
         public void HashPassword_Should_Return_Hash_And_Salt()
         {
             var (hash, salt) = _passwordService.HashPassword("StrongPassword@123");
-            Assert.False(string.IsNullOrEmpty(hash));
-            Assert.False(string.IsNullOrEmpty(salt));
+
+            hash.Should().NotBeNullOrWhiteSpace();
+            salt.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]
@@ -30,39 +28,40 @@ namespace gymvenience_test
             string password = "StrongPassword@123";
             var (_, salt) = _passwordService.HashPassword(password);
 
-            string hash1 = _passwordService.HashPassword(password, salt);
-            string hash2 = _passwordService.HashPassword(password, salt);
+            var hash1 = _passwordService.HashPassword(password, salt);
+            var hash2 = _passwordService.HashPassword(password, salt);
 
-            Assert.Equal(hash1, hash2);
+            hash1.Should().Be(hash2);
         }
 
         [Fact]
-        public void VerifyPassword_Should_Return_True_For_Correct_Password()
+        public void VerifyPassword_Should_Return_True_For_Valid_Credentials()
         {
             string password = "StrongPassword@123";
             var (hash, salt) = _passwordService.HashPassword(password);
 
-            bool isValid = _passwordService.VerifyPassword(password, hash, salt);
+            var result = _passwordService.VerifyPassword(password, hash, salt);
 
-            Assert.True(isValid);
+            result.Should().BeTrue();
         }
 
         [Fact]
-        public void VerifyPassword_Should_Return_False_For_Wrong_Password()
+        public void VerifyPassword_Should_Return_False_For_Invalid_Password()
         {
             string password = "StrongPassword@123";
             var (hash, salt) = _passwordService.HashPassword(password);
 
-            bool isValid = _passwordService.VerifyPassword("WrongPassword@123", hash, salt);
+            var result = _passwordService.VerifyPassword("WrongPassword", hash, salt);
 
-            Assert.False(isValid);
+            result.Should().BeFalse();
         }
 
         [Fact]
         public void IsPasswordStrongEnough_Should_Return_True_For_Strong_Password()
         {
-            bool result = _passwordService.IsPasswordStrongEnough("StrongPassword@123");
-            Assert.True(result);
+            var result = _passwordService.IsPasswordStrongEnough("StrongPassword@123");
+
+            result.Should().BeTrue();
         }
 
         [Theory]
@@ -70,12 +69,13 @@ namespace gymvenience_test
         [InlineData("onlylowercaseletters")]
         [InlineData("ONLYUPPERCASELETTERS")]
         [InlineData("1234567890")]
-        [InlineData("NoSymbolsOrNumbers")] // Lacks number and symbol
-        [InlineData("noUppercase123")] // Lacks uppercase
-        public void IsPasswordStrongEnough_Should_Return_False_For_Weak_Passwords(string weakPassword)
+        [InlineData("NoSymbolsOrNumbers")]
+        [InlineData("noUppercase123")]
+        public void IsPasswordStrongEnough_Should_Return_False_For_Weak_Passwords(string password)
         {
-            bool result = _passwordService.IsPasswordStrongEnough(weakPassword);
-            Assert.False(result);
+            var result = _passwordService.IsPasswordStrongEnough(password);
+
+            result.Should().BeFalse();
         }
     }
 }
