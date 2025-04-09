@@ -126,7 +126,30 @@ namespace gymvenience_backend.Controllers
         [HttpGet("trainers")]
         public async Task<ActionResult<IEnumerable<User>>> GetTrainers()
         {
-            return await _context.Users.Where(u => u.IsTrainer).ToListAsync();
+            return await _context.Users
+                .Where(u => u.IsTrainer)
+                .Include(u => u.Gym)
+                .ToListAsync();
+        }
+
+        [HttpPost("{userId}/assign-gym/{gymId}")]
+        public async Task<IActionResult> AssignGymToUser(string userId, string gymId)
+        {
+            var user = await _context.Users
+                .Include(u => u.Gym)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                return NotFound("User not found");
+
+            var gym = await _context.Gyms.FindAsync(gymId);
+            if (gym == null)
+                return NotFound("Gym not found");
+
+            user.Gym = gym;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Gym assigned successfully", user.Id, Gym = gym });
         }
     }
 
