@@ -151,6 +151,28 @@ namespace gymvenience_backend.Controllers
 
             return Ok(new { Message = "Gym assigned successfully", user.Id, Gym = gym });
         }
+
+        [HttpGet("searchTrainers", Name = "SearchTrainers")]
+        public async Task<IEnumerable<User>> SearchTrainers(
+        [FromQuery] string? city = null,
+        [FromQuery] string? address = null)
+        {
+            city ??= "";
+            address ??= "";
+
+            var trainers = await _context.Users
+                .Where(u => u.IsTrainer)
+                .Include(u => u.Gym)
+                .ToListAsync();
+
+            if (!string.IsNullOrWhiteSpace(city))
+                trainers = trainers.Where(u => u.Gym != null && u.Gym.City.ToLower().Equals(city.ToLower())).ToList();
+
+            if (!string.IsNullOrWhiteSpace(address))
+                trainers = trainers.Where(u => u.Gym != null && u.Gym.Address.ToLower().Equals(address.ToLower())).ToList();
+
+            return trainers;
+        }
     }
 
     public class UpdateProfileDto
