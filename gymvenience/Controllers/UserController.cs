@@ -126,7 +126,52 @@ namespace gymvenience_backend.Controllers
         [HttpGet("trainers")]
         public async Task<ActionResult<IEnumerable<User>>> GetTrainers()
         {
-            return await _context.Users.Where(u => u.IsTrainer).ToListAsync();
+            return await _context.Users
+                .Where(u => u.IsTrainer)
+                .Include(u => u.Gym)
+                .ToListAsync();
+        }
+
+        [HttpPost("{userId}/assign-gym/{gymId}")]
+        public async Task<IActionResult> AssignGymToUser(string userId, string gymId)
+        {
+            var user = await _context.Users
+                .Include(u => u.Gym)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                return NotFound("User not found");
+
+            var gym = await _context.Gyms.FindAsync(gymId);
+            if (gym == null)
+                return NotFound("Gym not found");
+
+            user.Gym = gym;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Gym assigned successfully", user.Id, Gym = gym });
+        }
+
+        [HttpGet("searchTrainers", Name = "SearchTrainers")]
+        public async Task<IEnumerable<User>> SearchTrainers(
+        [FromQuery] string? city = null,
+        [FromQuery] string? address = null)
+        {
+            city ??= "";
+            address ??= "";
+
+            var trainers = await _context.Users
+                .Where(u => u.IsTrainer)
+                .Include(u => u.Gym)
+                .ToListAsync();
+
+            if (!string.IsNullOrWhiteSpace(city))
+                trainers = trainers.Where(u => u.Gym != null && u.Gym.City.ToLower().Equals(city.ToLower())).ToList();
+
+            if (!string.IsNullOrWhiteSpace(address))
+                trainers = trainers.Where(u => u.Gym != null && u.Gym.Address.ToLower().Equals(address.ToLower())).ToList();
+
+            return trainers;
         }
     }
 

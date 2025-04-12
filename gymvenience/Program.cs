@@ -19,6 +19,8 @@ using gymvenience_backend.Services.OrderService;
 using Stripe;
 using gymvenience.Services.ReservationService;
 using gymvenience_backend.Repositories.ReservationRepo;
+using gymvenience.Repositories.GymRepo;
+using gymvenience.Services.GymService;
 
 namespace gymvenience_backend
 {
@@ -91,7 +93,6 @@ namespace gymvenience_backend
             builder.Services.AddAutoMapper(typeof(ProductMapperProfile));
             builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
-            builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IPasswordService, PasswordService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
@@ -100,13 +101,16 @@ namespace gymvenience_backend
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
             builder.Services.AddScoped<IReservationService, ReservationService>();
-
+            builder.Services.AddScoped<IGymRepository, GymRepository>();
+            builder.Services.AddScoped<IGymService, GymService>();
 
             var app = builder.Build();
 
             var scope = app.Services.CreateScope();
             var productRepo = scope.ServiceProvider.GetRequiredService<IProductRepository>();
+            var gymRepo = scope.ServiceProvider.GetRequiredService<IGymRepository>();
             //productRepo.GenerateMockProducts();
+            //gymRepo.GenerateMockGyms();
 
             app.UseCors("AllowSpecificOrigin");
 

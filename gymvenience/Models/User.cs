@@ -17,6 +17,7 @@ namespace gymvenience_backend.Models
         public float Rating { get; set; } = 0.0f;
         public List<Product> PurchasedProducts { get; set; }
         public List<Reservation> Reservations { get; set; }
+        public Gym? Gym { get; set; }
 
         public User()
         {
