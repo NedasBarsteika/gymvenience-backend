@@ -33,5 +33,7 @@ namespace gymvenience_backend
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Gym> Gyms { get; set; }
+        public DbSet<TrainerAvailability> TrainerAvailabilities { get; set; }
+
     }
 }

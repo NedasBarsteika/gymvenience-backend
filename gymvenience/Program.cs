@@ -21,6 +21,7 @@ using gymvenience.Services.ReservationService;
 using gymvenience_backend.Repositories.ReservationRepo;
 using gymvenience.Repositories.GymRepo;
 using gymvenience.Services.GymService;
+using gymvenience.Repositories.TrainerAvailabilityRepo;
 
 namespace gymvenience_backend
 {
@@ -103,6 +104,8 @@ namespace gymvenience_backend
             builder.Services.AddScoped<IReservationService, ReservationService>();
             builder.Services.AddScoped<IGymRepository, GymRepository>();
             builder.Services.AddScoped<IGymService, GymService>();
+            builder.Services.AddScoped<ITrainerAvailabilityRepository, TrainerAvailabilityRepository>();
+
 
             var app = builder.Build();
 
