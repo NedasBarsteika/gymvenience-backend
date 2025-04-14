@@ -115,7 +115,7 @@ namespace gymvenience_backend
             var productRepo = scope.ServiceProvider.GetRequiredService<IProductRepository>();
             var gymRepo = scope.ServiceProvider.GetRequiredService<IGymRepository>();
             //productRepo.GenerateMockProducts();
-            gymRepo.GenerateMockGyms();
+            //gymRepo.GenerateMockGyms();
 
             app.UseCors("AllowSpecificOrigin");
 

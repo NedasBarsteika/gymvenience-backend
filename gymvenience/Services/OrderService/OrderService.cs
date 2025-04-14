@@ -9,12 +9,19 @@ namespace gymvenience_backend.Services.OrderService
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly ApplicationDbContext _context;
 
-        public OrderService(IOrderRepository orderRepository)
+        public OrderService(IOrderRepository orderRepository, ApplicationDbContext context)
         {
             _orderRepository = orderRepository;
+            _context = context;
         }
-
+        public async Task<Order> CreateOrderAsync(Order order)
+        {
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+            return order;
+        }
         // Get all orders
         public async Task<List<Order>> GetAllOrdersAsync()
         {
