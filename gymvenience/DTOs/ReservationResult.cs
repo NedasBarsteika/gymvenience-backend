@@ -8,7 +8,7 @@ namespace gymvenience.DTOs
         public string Message { get; set; }
         public Reservation? Reservation { get; set; }
 
-        public ReservationResult(bool success, string message, Reservation? reservation = null)
+        public ReservationResult(bool success, string message, Reservation? reservation)
         {
             Success = success;
             Message = message;

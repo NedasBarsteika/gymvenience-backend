@@ -2,16 +2,21 @@
 using Microsoft.AspNetCore.Mvc;
 using gymvenience_backend.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using gymvenience_backend.Models;
+using Microsoft.EntityFrameworkCore;
+using gymvenience_backend;
 
 [Route("api/[controller]")]
 [ApiController]
 public class ReservationController : ControllerBase
 {
     private readonly IReservationService _reservationService;
+    private readonly ApplicationDbContext _context;
 
-    public ReservationController(IReservationService reservationService)
+    public ReservationController(IReservationService reservationService, ApplicationDbContext context)
     {
         _reservationService = reservationService;
+        _context = context;
     }
 
     [HttpGet("{userId}")]
@@ -25,16 +30,16 @@ public class ReservationController : ControllerBase
         return Ok(reservations);
     }
     // POST api/reservations
-    [Authorize]
     [HttpPost]
     public IActionResult BookReservation([FromBody] ReservationDto dto)
     {
+        if (dto.UserId == null)
+            return Unauthorized("No user ID in token.");
         var result = _reservationService.CreateReservation(dto);
         if (!result.Success) return BadRequest(result.Message);
         return Ok(result.Reservation);
     }
     // DELETE api/reservations/{reservationId}
-    [Authorize]
     [HttpDelete("{reservationId}")]
     public IActionResult CancelReservation(string reservationId)
     {

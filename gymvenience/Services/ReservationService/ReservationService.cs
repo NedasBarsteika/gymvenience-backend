@@ -22,11 +22,11 @@ public class ReservationService : IReservationService
     {
         var slot = _reservationRepository.GetAvailableTimeSlot(dto.SlotId);
         if (slot == null)
-            return new ReservationResult(false, "Time slot already booked or doesn't exist.");
+            return new ReservationResult(false, "Time slot already booked or doesn't exist.", null);
 
         var gym = _reservationRepository.GetGymById(dto.GymId);
         if (gym == null)
-            return new ReservationResult(false, "Gym not found.");
+            return new ReservationResult(false, "Gym not found.", null);
 
         var reservation = new Reservation
         {
@@ -35,8 +35,8 @@ public class ReservationService : IReservationService
             TrainerId = slot.TrainerId,
             Date = slot.Date,
             Time = slot.StartTime,
-            Duration = slot.EndTime - slot.StartTime,
-            Gym = gym
+            Duration = slot.Duration,
+            GymId = dto.GymId
         };
 
         _reservationRepository.MarkTimeSlotReserved(slot);

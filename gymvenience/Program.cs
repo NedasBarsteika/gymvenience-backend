@@ -22,6 +22,7 @@ using gymvenience_backend.Repositories.ReservationRepo;
 using gymvenience.Repositories.GymRepo;
 using gymvenience.Services.GymService;
 using gymvenience.Repositories.TrainerAvailabilityRepo;
+using gymvenience.Services.TrainerAvailabilityService;
 
 namespace gymvenience_backend
 {
@@ -105,6 +106,7 @@ namespace gymvenience_backend
             builder.Services.AddScoped<IGymRepository, GymRepository>();
             builder.Services.AddScoped<IGymService, GymService>();
             builder.Services.AddScoped<ITrainerAvailabilityRepository, TrainerAvailabilityRepository>();
+            builder.Services.AddScoped<ITrainerAvailabilityService, TrainerAvailabilityService>();
 
 
             var app = builder.Build();
@@ -113,7 +115,7 @@ namespace gymvenience_backend
             var productRepo = scope.ServiceProvider.GetRequiredService<IProductRepository>();
             var gymRepo = scope.ServiceProvider.GetRequiredService<IGymRepository>();
             //productRepo.GenerateMockProducts();
-            //gymRepo.GenerateMockGyms();
+            gymRepo.GenerateMockGyms();
 
             app.UseCors("AllowSpecificOrigin");
 

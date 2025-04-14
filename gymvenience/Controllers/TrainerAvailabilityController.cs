@@ -19,7 +19,7 @@ public class TrainerAvailabilityController : ControllerBase
     [HttpPost]
     public IActionResult AddSlot([FromBody] AvailabilityDto dto)
     {
-        _service.AddSlot(dto.TrainerId, dto.Date, dto.StartTime, dto.EndTime);
+        _service.AddSlot(dto.TrainerId, dto.Date, dto.StartTime, dto.Duration, dto.GymId);
         return Ok();
     }
 

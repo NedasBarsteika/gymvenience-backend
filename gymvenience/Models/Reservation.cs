@@ -8,6 +8,6 @@
         public TimeSpan Time { get; set; }  // The starting time (HH:mm)
         public TimeSpan Duration { get; set; }  // Duration of the session
         public string TrainerId { get; set; }  // Trainer's userId
-        public Gym Gym { get; set; }  // Gym address
+        public string GymId { get; set; }  // Gym address
     }
 }

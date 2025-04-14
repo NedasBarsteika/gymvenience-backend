@@ -97,11 +97,9 @@ namespace gymvenience_backend.Controllers
         }
 
         // PUT /api/user/me
-        [HttpPut("me")]
-        public IActionResult UpdateMyProfile([FromBody] UpdateProfileDto updateDto)
+        [HttpPut("{userId}/me")]
+        public IActionResult UpdateMyProfile([FromBody] UpdateProfileDto updateDto, string userId)
         {
-            // Once again, we identify the user from the token
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
                 return Unauthorized("No user ID in token.");
 

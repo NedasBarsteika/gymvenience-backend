@@ -12,16 +12,10 @@ public class TrainerAvailabilityService : ITrainerAvailabilityService
         _trainerAvailabilityRepository = repository;
     }
 
-    public void AddSlot(string trainerId, DateTime date, TimeSpan start, TimeSpan end)
+    public void AddSlot(string trainerId, DateTime date, TimeSpan start, TimeSpan duration, string gymId)
     {
-        // Check for overlaps before adding
-        var slot = new TrainerAvailability
-        {
-            TrainerId = trainerId,
-            Date = date,
-            StartTime = start,
-            EndTime = end
-        };
+        var slot = new TrainerAvailability(Guid.NewGuid().ToString(), trainerId, date, start, duration, false, gymId);
+
         _trainerAvailabilityRepository.AddAvailability(slot);
     }
 
@@ -56,7 +50,7 @@ public class TrainerAvailabilityService : ITrainerAvailabilityService
 
         slot.Date = dto.Date;
         slot.StartTime = dto.StartTime;
-        slot.EndTime = dto.EndTime;
+        slot.Duration = dto.Duration;
 
         _trainerAvailabilityRepository.UpdateSlot(slot);
         _trainerAvailabilityRepository.SaveChanges();
