@@ -9,29 +9,64 @@ using gymvenience_backend;
 
 #nullable disable
 
-namespace gymvenience_backend.Migrations
+namespace gymvenience.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250401161133_ReservationsConnection")]
-    partial class ReservationsConnection
+    [Migration("20250414210208_GymId")]
+    partial class GymId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.3")
+                .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("gymvenience.Models.Gym", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Gyms");
+                });
+
             modelBuilder.Entity("gymvenience.Models.Reservation", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -39,23 +74,58 @@ namespace gymvenience_backend.Migrations
                     b.Property<TimeSpan>("Duration")
                         .HasColumnType("time");
 
-                    b.Property<string>("Place")
+                    b.Property<string>("GymId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
 
-                    b.Property<string>("Trainer")
+                    b.Property<string>("TrainerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GymId");
+
+                    b.HasIndex("UserId");
+
                     b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("gymvenience.Models.TrainerAvailability", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("time");
+
+                    b.Property<string>("GymId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Reserved")
+                        .HasColumnType("bit");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("TrainerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TrainerAvailabilities");
                 });
 
             modelBuilder.Entity("gymvenience_backend.Models.Cart", b =>
@@ -198,6 +268,9 @@ namespace gymvenience_backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("GymId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("HashedPassword")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -229,7 +302,26 @@ namespace gymvenience_backend.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GymId");
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("gymvenience.Models.Reservation", b =>
+                {
+                    b.HasOne("gymvenience.Models.Gym", "Gym")
+                        .WithMany()
+                        .HasForeignKey("GymId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("gymvenience_backend.Models.User", null)
+                        .WithMany("Reservations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gym");
                 });
 
             modelBuilder.Entity("gymvenience_backend.Models.CartItem", b =>
@@ -257,6 +349,15 @@ namespace gymvenience_backend.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("gymvenience_backend.Models.User", b =>
+                {
+                    b.HasOne("gymvenience.Models.Gym", "Gym")
+                        .WithMany()
+                        .HasForeignKey("GymId");
+
+                    b.Navigation("Gym");
+                });
+
             modelBuilder.Entity("gymvenience_backend.Models.Cart", b =>
                 {
                     b.Navigation("CartItems");
@@ -270,6 +371,8 @@ namespace gymvenience_backend.Migrations
             modelBuilder.Entity("gymvenience_backend.Models.User", b =>
                 {
                     b.Navigation("PurchasedProducts");
+
+                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }
