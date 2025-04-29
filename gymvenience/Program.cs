@@ -51,6 +51,7 @@ namespace gymvenience_backend
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                
             })
             .AddJwtBearer(options =>
             {
