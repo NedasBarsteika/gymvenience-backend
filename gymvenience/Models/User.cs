@@ -34,7 +34,6 @@ namespace gymvenience_backend.Models
             Reservations = new List<Reservation>();
         }
 
-        // Optional: Extend your parameterized constructor if needed
         public User(string id, string name, string surname, string email, string password, string salt)
         {
             Id = id;

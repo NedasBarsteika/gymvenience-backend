@@ -20,21 +20,21 @@ namespace gymvenience_backend.Repositories.ProductRepo
                     new Product
                     {
                         Id = Guid.NewGuid().ToString(),
-                        Name = "Protein Powder",
+                        Name = "Proteino milteliai",
                         Description = "Good product very nice",
                         Price = 24.99,
-                        CoverImageUrl = "./Images/Products/protein_powder.jpg",
-                        Category = "ProteinPowder",
+                        CoverImageUrl = "/Images/Products/protein_powder.jpg",
+                        Category = "Baltymų milteliai",
                         Quantity = 50
                     },
                     new Product
                     {
                         Id = Guid.NewGuid().ToString(),
-                        Name = "20kg dumbbells",
+                        Name = "20kg hanteliai",
                         Description = "Good product very nice",
                         Price = 49.99,
-                        CoverImageUrl = "./Images/Products/20kg_dumbells.jpg",
-                        Category = "Dumbells",
+                        CoverImageUrl = "/Images/Products/20kg_dumbells.jpg",
+                        Category = "Hanteliai",
                         Quantity = 50
                     }
             };
