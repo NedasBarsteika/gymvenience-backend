@@ -31,8 +31,8 @@ namespace gymvenience_backend.Services.StripeService
                     }
                 },
                 Mode = "payment",
-                SuccessUrl = "http://localhost:3000/success?session_id={CHECKOUT_SESSION_ID}",
-                CancelUrl = "http://localhost:3000/cancel",
+                SuccessUrl = "http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}",
+                CancelUrl = "http://localhost:5173/cancel",
             };
 
             var service = new SessionService();
