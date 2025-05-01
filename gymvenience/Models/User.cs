@@ -48,5 +48,15 @@ namespace gymvenience_backend.Models
             PurchasedProducts = new List<Product>();
             Reservations = new List<Reservation>();
         }
+
+        public void DemoteFromTrainer()
+        {
+            IsTrainer = false;
+            Bio = string.Empty;
+            ImageUrl = string.Empty;
+            Rating = 0.0f;
+            Gym = null;
+        }
+
     }
 }

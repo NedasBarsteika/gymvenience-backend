@@ -33,5 +33,19 @@ namespace gymvenience_backend.Repositories.OrderRepo
                 .Include(o => o.Items) // Include OrderItems
                 .ToListAsync();
         }
+        // Finds the order by its id
+        public async Task<Order?> GetByIdAsync(int orderId)
+        {
+            return await _context.Orders
+                                 .Include(o => o.Items)
+                                 .FirstOrDefaultAsync(o => o.Id == orderId);
+        }
+        // Marks order as delivered
+        public async Task MarkDeliveredAsync(Order order)
+        {
+            order.IsDelivered = true;
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+        }
     }
 }

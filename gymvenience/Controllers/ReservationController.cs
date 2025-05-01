@@ -49,4 +49,26 @@ public class ReservationController : ControllerBase
 
         return NoContent();
     }
+    // POST api/reservation/{reservationId}/done
+    [HttpPost("{reservationId}/done")]
+    //[Authorize]
+    public async Task<IActionResult> MarkDone(string reservationId)
+    {
+        var ok = await _reservationService.MarkDoneAsync(reservationId);
+        if (!ok)
+            return NotFound(new { message = "Reservation not found or already marked done." });
+        return Ok(new { message = "Reservation marked as done." });
+    }
+    /// <summary>
+    /// Get all reservations (booked slots) for a specific trainer.
+    /// </summary>
+    [HttpGet("trainer/{trainerId}")]
+    //[Authorize(Roles = "Trainer,Admin")]
+    public IActionResult GetTrainerReservations(string trainerId)
+    {
+        var reservations = _reservationService.GetReservationsForTrainer(trainerId);
+        if (!reservations.Any())
+            return NotFound("No reservations found for this trainer.");
+        return Ok(reservations);
+    }
 }

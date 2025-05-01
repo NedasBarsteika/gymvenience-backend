@@ -150,6 +150,21 @@ namespace gymvenience_backend.Controllers
             return Ok(new { Message = "Gym assigned successfully", user.Id, Gym = gym });
         }
 
+        /// <summary>
+        /// Delete a user (by any role) from the system.
+        /// </summary>
+        /// <param name="id">The user’s unique ID.</param>
+        [HttpDelete("{id}")]
+        //[Authorize(Roles = "Admin")]  // only admins can delete accounts
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var deleted = await _userService.DeleteUserAsync(id);
+            if (!deleted)
+                return NotFound(new { message = "User not found." });
+
+            return NoContent();
+        }
+
         [HttpGet("searchTrainers", Name = "SearchTrainers")]
         public async Task<IEnumerable<User>> SearchTrainers(
         [FromQuery] string? city = null,
@@ -170,6 +185,43 @@ namespace gymvenience_backend.Controllers
                 trainers = trainers.Where(u => u.Gym != null && u.Gym.Address.ToLower().Equals(address.ToLower())).ToList();
 
             return trainers;
+        }
+        /// <summary>
+        /// Get all users.
+        /// </summary>
+        [HttpGet]
+        //[Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+        {
+            var users = await _userService.GetAllUsersAsync();
+            return Ok(users);
+        }
+
+        /// <summary>
+        /// Demote a trainer back to a regular user and remove their availability slots.
+        /// </summary>
+        /// <param name="id">The trainer’s user ID.</param>
+        [HttpPost("{id}/demote")]
+        //[Authorize(Roles = "Admin")] // or whichever role is allowed
+        public async Task<IActionResult> DemoteTrainer(string id)
+        {
+            var ok = await _userService.DemoteTrainerAsync(id);
+            if (!ok) return NotFound(new { message = "Trainer not found or already demoted." });
+            return Ok(new { message = "Trainer demoted successfully." });
+        }
+
+        /// <summary>
+        /// Promote user to trainer.
+        /// </summary>
+        [HttpPost("{id}/promote")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> PromoteToTrainer(string id)
+        {
+            var success = await _userService.PromoteToTrainerAsync(id);
+            if (!success)
+                return NotFound(new { message = "User not found or already a trainer." });
+
+            return Ok(new { message = "User promoted to trainer." });
         }
     }
 

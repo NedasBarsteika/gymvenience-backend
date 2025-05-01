@@ -7,6 +7,7 @@ using gymvenience_backend.Services.AuthService;
 using gymvenience_backend.Services.ProductService;
 using gymvenience_backend.Services.PasswordService;
 using Microsoft.EntityFrameworkCore;
+using gymvenience.Repositories.TrainerAvailabilityRepo;
 
 namespace gymvenience_backend.Services.UserService
 {
@@ -17,14 +18,16 @@ namespace gymvenience_backend.Services.UserService
         private readonly IOrderRepository _orderRepository;
         private readonly IPasswordService _passwordService;
         private readonly IAuthService _authService;
+        private readonly ITrainerAvailabilityRepository _trainerAvailabilityRepository;
 
-        public UserService(IUserRepository userRepository, IPasswordService passwordService, IAuthService authService, IProductRepository productRepository, IOrderRepository orderRepository)
+        public UserService(IUserRepository userRepository, IPasswordService passwordService, IAuthService authService, IProductRepository productRepository, IOrderRepository orderRepository, ITrainerAvailabilityRepository trainerRepository)
         {
             _userRepository = userRepository;
             _productRepository = productRepository;
             _orderRepository = orderRepository;
             _passwordService = passwordService;
             _authService = authService;
+            _trainerAvailabilityRepository = trainerRepository;
         }
 
         public async Task<(Result, User?)> CreateUserAsync(string name, string surname, string email, string password)
@@ -92,6 +95,37 @@ namespace gymvenience_backend.Services.UserService
         {
             var hashedInputPassword = _passwordService.HashPassword(password, storedSalt);
             return hashedInputPassword == storedHashedPassword;
+        }
+        // Remove Trainer (demote into user)
+        public async Task<bool> DemoteTrainerAsync(string userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null || !user.IsTrainer)
+                return false;
+
+            // remove trainer availability slots
+            _trainerAvailabilityRepository.RemoveAllForTrainer(userId);
+
+            // demote
+            user.DemoteFromTrainer();
+            await _userRepository.UpdateAsync(user);
+
+            return true;
+        }
+        public async Task<bool> DeleteUserAsync(string userId)
+        {
+            // You could add business rules here (e.g. prevent deleting last admin)
+            return await _userRepository.DeleteAsync(userId);
+        }
+        // Getting all users
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        {
+            return await _userRepository.GetAllAsync();
+        }
+        // Promoting user to trainer
+        public async Task<bool> PromoteToTrainerAsync(string userId)
+        {
+            return await _userRepository.PromoteToTrainerAsync(userId);
         }
     }
 }

@@ -7,5 +7,6 @@ namespace gymvenience_backend.Services.OrderService
         Task<Order> CreateOrderAsync(Order order);
         Task<List<Order>> GetAllOrdersAsync();
         Task<List<Order>> GetUserOrdersAsync(string userId);
+        Task<bool> DeliverOrderAsync(int orderId);
     }
 }

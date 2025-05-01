@@ -33,5 +33,15 @@ namespace gymvenience_backend.Services.OrderService
         {
             return await _orderRepository.GetUserOrdersAsync(userId);
         }
+
+        public async Task<bool> DeliverOrderAsync(int orderId)
+        {
+            var order = await _orderRepository.GetByIdAsync(orderId);
+            if (order == null) return false;
+            if (order.IsDelivered) return false;
+
+            await _orderRepository.MarkDeliveredAsync(order);
+            return true;
+        }
     }
 }

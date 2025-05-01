@@ -86,5 +86,22 @@ namespace gymvenience_backend.Repositories.ProductRepo
 
             return products;
         }
+        // Add products
+        public async Task<Product> AddAsync(Product product)
+        {
+            product.Id = Guid.NewGuid().ToString();
+            await _context.Products.AddAsync(product);
+            await _context.SaveChangesAsync();
+            return product;
+        }
+        // Delete products
+        public async Task<bool> DeleteAsync(string id)
+        {
+            var prod = await _context.Products.FindAsync(id);
+            if (prod == null) return false;
+            _context.Products.Remove(prod);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

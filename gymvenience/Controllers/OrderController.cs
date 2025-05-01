@@ -79,5 +79,15 @@ namespace gymvenience_backend.Controllers
 
             return false;
         }
+        /// <summary>
+        /// Mark an order as delivered.
+        /// </summary>
+        [HttpPost("{orderId}/deliver")]
+        public async Task<IActionResult> DeliverOrder(int orderId)
+        {
+            var ok = await _orderService.DeliverOrderAsync(orderId);
+            if (!ok) return NotFound(new { message = "Order not found or already delivered." });
+            return Ok(new { message = "Order marked as delivered." });
+        }
     }
 }

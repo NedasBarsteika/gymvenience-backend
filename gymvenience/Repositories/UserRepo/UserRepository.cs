@@ -31,21 +31,51 @@ namespace gymvenience_backend.Repositories.UserRepo
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
         }
-
-        public async Task<User?> UpdateUserAsync(string userId, UserProfileDto updatedProfile)
+        // Profile edits (bio, trainer flag, etc.)
+        public async Task<User?> UpdateProfileAsync(string userId, UserProfileDto updatedProfile)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Id == userId);
-
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null) return null;
 
-            // Update fields
             user.Bio = updatedProfile.Bio;
             user.IsTrainer = updatedProfile.IsTrainer;
-            // ... update other fields as needed
 
             await _context.SaveChangesAsync();
             return user;
         }
+        // Generic full-entity update (e.g. after demotion)
+        public async Task UpdateAsync(User user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
+        // Deleting user
+        public async Task<bool> DeleteAsync(string userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        // Getting users
+        public async Task<IEnumerable<User>> GetAllAsync()
+        {
+            return await _context.Users.ToListAsync();
+        }
+
+        // Promote user to trainer
+        public async Task<bool> PromoteToTrainerAsync(string userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null || user.IsTrainer) return false;
+            user.IsTrainer = true;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
     }
 }
