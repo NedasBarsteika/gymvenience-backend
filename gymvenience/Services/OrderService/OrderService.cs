@@ -33,7 +33,6 @@ namespace gymvenience_backend.Services.OrderService
         {
             return await _orderRepository.GetUserOrdersAsync(userId);
         }
-
         public async Task<bool> DeliverOrderAsync(int orderId)
         {
             var order = await _orderRepository.GetByIdAsync(orderId);
@@ -42,6 +41,21 @@ namespace gymvenience_backend.Services.OrderService
 
             await _orderRepository.MarkDeliveredAsync(order);
             return true;
+        }
+        public async Task<bool> ExistsForSessionAsync(string stripeSessionId)
+        {
+            if (string.IsNullOrWhiteSpace(stripeSessionId))
+                return false;
+
+            return await _context.Orders
+                                 .AsNoTracking()
+                                 .AnyAsync(o => o.StripeSessionId == stripeSessionId);
+        }
+        public async Task<Order?> GetBySessionAsync(string stripeSessionId)
+        {
+            return await _context.Orders
+                         .AsNoTracking()
+                         .FirstOrDefaultAsync(o => o.StripeSessionId == stripeSessionId);
         }
     }
 }

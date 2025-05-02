@@ -8,5 +8,7 @@ namespace gymvenience_backend.Services.OrderService
         Task<List<Order>> GetAllOrdersAsync();
         Task<List<Order>> GetUserOrdersAsync(string userId);
         Task<bool> DeliverOrderAsync(int orderId);
+        Task<bool> ExistsForSessionAsync(string stripeSessionId);
+        Task<Order?> GetBySessionAsync(string stripeSessionId);
     }
 }
