@@ -33,5 +33,20 @@ namespace gymvenience_backend.Services.OrderService
         {
             return await _orderRepository.GetUserOrdersAsync(userId);
         }
+        public async Task<bool> ExistsForSessionAsync(string stripeSessionId)
+        {
+            if (string.IsNullOrWhiteSpace(stripeSessionId))
+                return false;
+
+            return await _context.Orders
+                                 .AsNoTracking()
+                                 .AnyAsync(o => o.StripeSessionId == stripeSessionId);
+        }
+        public async Task<Order?> GetBySessionAsync(string stripeSessionId)
+{
+            return await _context.Orders
+                         .AsNoTracking()
+                         .FirstOrDefaultAsync(o => o.StripeSessionId == stripeSessionId);
+}
     }
 }
