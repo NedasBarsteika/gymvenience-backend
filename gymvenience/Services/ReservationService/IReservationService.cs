@@ -9,5 +9,7 @@ namespace gymvenience.Services.ReservationService
         public IEnumerable<Reservation> GetUserReservations(string userId);
         public bool CancelReservation(string reservationId);
         public ReservationResult CreateReservation(ReservationDto dto);
+        Task<bool> MarkDoneAsync(string reservationId);
+        IEnumerable<Reservation> GetReservationsForTrainer(string trainerId);
     }
 }

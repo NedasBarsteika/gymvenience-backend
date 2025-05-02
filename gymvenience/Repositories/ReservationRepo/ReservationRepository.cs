@@ -56,4 +56,15 @@ public class ReservationRepository : IReservationRepository
         return _context.TrainerAvailabilities
             .FirstOrDefault(s => s.TrainerId == trainerId && s.Date.Date == date.Date && s.StartTime == startTime);
     }
+    public async Task SaveChangesAsync()
+    {
+        await _context.SaveChangesAsync();
+    }
+    public IEnumerable<Reservation> GetReservationsByTrainer(string trainerId)
+    {
+        return _context.Reservations
+            .Where(r => r.TrainerId == trainerId)
+            .ToList();
+    }
+
 }

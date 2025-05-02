@@ -67,6 +67,18 @@ public class ReservationService : IReservationService
 
         return true;
     }
+    public async Task<bool> MarkDoneAsync(string reservationId)
+    {
+        var reservation = _reservationRepository.GetReservationById(reservationId);
+        if (reservation == null || reservation.IsDone)
+            return false;
 
-
+        reservation.IsDone = true;
+        await _reservationRepository.SaveChangesAsync();
+        return true;
+    }
+    public IEnumerable<Reservation> GetReservationsForTrainer(string trainerId)
+    {
+        return _reservationRepository.GetReservationsByTrainer(trainerId);
+    }
 }

@@ -65,6 +65,13 @@ namespace gymvenience.Repositories.TrainerAvailabilityRepo
         {
             _context.TrainerAvailabilities.Update(slot);
         }
+        public void RemoveAllForTrainer(string trainerId)
+        {
+            var slots = _context.TrainerAvailabilities
+                .Where(a => a.TrainerId == trainerId);
+            _context.TrainerAvailabilities.RemoveRange(slots);
+            _context.SaveChanges();
+        }
     }
 
 }

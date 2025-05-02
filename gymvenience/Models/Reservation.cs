@@ -9,5 +9,6 @@
         public TimeSpan Duration { get; set; }  // Duration of the session
         public string TrainerId { get; set; }  // Trainer's userId
         public string GymId { get; set; }  // Gym address
+        public bool IsDone { get; set; } = false; // Is reservation already done flag
     }
 }

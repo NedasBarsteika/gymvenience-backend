@@ -14,5 +14,7 @@ namespace gymvenience_backend.Repositories.ReservationRepo
         public void RemoveReservation(Reservation reservation);
         public void SaveChanges();
         public TrainerAvailability? GetTimeSlotByTrainerAndTime(string trainerId, DateTime date, TimeSpan startTime);
+        Task SaveChangesAsync();
+        IEnumerable<Reservation> GetReservationsByTrainer(string trainerId);
     }
 }

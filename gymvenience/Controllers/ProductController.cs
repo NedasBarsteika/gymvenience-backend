@@ -68,5 +68,34 @@ namespace gymvenience_backend.Controllers
             var sanitizedProductList = _mapper.Map<IEnumerable<ProductListView>>(requiredProducts);
             return sanitizedProductList;
         }
+        // POST api/products
+        [HttpPost]
+        //[Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ProductDetailedView>> Create([FromBody] CreateProductDto dto)
+        {
+            var prod = await _productService.CreateProductAsync(dto);
+            var view = _mapper.Map<ProductDetailedView>(prod);
+            return CreatedAtRoute("GetProduct", new { id = prod.Id }, view);
+        }
+
+        // PUT api/products/{id}
+        [HttpPut("{id}")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(string id, [FromBody] UpdateProductDto dto)
+        {
+            var ok = await _productService.UpdateProductAsync(id, dto);
+            if (!ok) return NotFound();
+            return NoContent();
+        }
+
+        // DELETE api/products/{id}
+        [HttpDelete("{id}")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var ok = await _productService.DeleteProductAsync(id);
+            if (!ok) return NotFound();
+            return NoContent();
+        }
     }
 }

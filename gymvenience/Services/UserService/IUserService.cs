@@ -9,5 +9,9 @@ namespace gymvenience_backend.Services.UserService
         public Task<(Result, string)> GenerateJwtAsync(string email, string password);
         public Task<(Result, List<Order>?)> GetAllOrdersAsync(string userId);
         bool IsPasswordCorrect(string password, string storedHashedPassword, string storedSalt);
+        public Task<bool> DemoteTrainerAsync(string userId);
+        Task<bool> DeleteUserAsync(string userId);
+        Task<IEnumerable<User>> GetAllUsersAsync();
+        Task<bool> PromoteToTrainerAsync(string userId);
     }
 }

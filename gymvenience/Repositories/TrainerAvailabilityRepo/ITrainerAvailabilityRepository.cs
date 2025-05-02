@@ -10,4 +10,5 @@ public interface ITrainerAvailabilityRepository
     public void SaveChanges();
     public void DeleteSlot(TrainerAvailability slot);
     public TrainerAvailability? GetSlotById(string id);
+    public void RemoveAllForTrainer(string trainerId);
 }

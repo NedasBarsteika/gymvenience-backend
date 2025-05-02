@@ -6,6 +6,7 @@
         public string UserId { get; set; }
         public string   StripeSessionId { get; set; }   
         public DateTime OrderDate { get; set; }
+        public bool IsDelivered { get; set; } = false;
         public List<OrderItem> Items { get; set; } = new List<OrderItem>();
     }
 
