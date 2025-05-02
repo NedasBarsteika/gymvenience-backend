@@ -71,4 +71,13 @@ public class ReservationController : ControllerBase
             return NotFound("No reservations found for this trainer.");
         return Ok(reservations);
     }
+    // GET api/reservation/all
+    [HttpGet("all")]
+    //[Authorize(Roles = "Admin")]
+    public IActionResult GetAllReservations()
+    {
+        var reservations = _reservationService.GetAllReservations();
+        return Ok(reservations);
+    }
+
 }

@@ -66,5 +66,10 @@ public class ReservationRepository : IReservationRepository
             .Where(r => r.TrainerId == trainerId)
             .ToList();
     }
+    public IEnumerable<Reservation> GetAllReservations()
+    {
+        return _context.Reservations.ToList();
+    }
+
 
 }
