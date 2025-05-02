@@ -223,6 +223,23 @@ namespace gymvenience_backend.Controllers
 
             return Ok(new { message = "User promoted to trainer." });
         }
+
+        /// <summary>
+        /// Get a user by their ID.
+        /// </summary>
+        /// <param name="userId">The ID of the user to retrieve.</param>
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<User>> GetUserById(string userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found." });
+            }
+
+            return Ok(user);
+        }
+
     }
 
     public class UpdateProfileDto

@@ -81,4 +81,9 @@ public class ReservationService : IReservationService
     {
         return _reservationRepository.GetReservationsByTrainer(trainerId);
     }
+    public IEnumerable<Reservation> GetAllReservations()
+    {
+        return _reservationRepository.GetAllReservations();
+    }
+
 }
