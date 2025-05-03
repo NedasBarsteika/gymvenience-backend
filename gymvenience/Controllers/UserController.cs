@@ -231,7 +231,10 @@ namespace gymvenience_backend.Controllers
         [HttpGet("{userId}")]
         public async Task<ActionResult<User>> GetUserById(string userId)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
+            var user = await _context.Users
+                .Include(u => u.Gym)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
             if (user == null)
             {
                 return NotFound(new { message = "User not found." });
@@ -239,7 +242,6 @@ namespace gymvenience_backend.Controllers
 
             return Ok(user);
         }
-
     }
 
     public class UpdateProfileDto
