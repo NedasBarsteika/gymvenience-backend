@@ -1,5 +1,6 @@
 ﻿using gymvenience.Services.GymService;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace gymvenience.Controllers
 {
@@ -26,6 +27,16 @@ namespace gymvenience.Controllers
         {
             var addresses = await _gymService.GetAllAddressesAsync();
             return Ok(addresses);
+        }
+
+        [HttpGet("{id}/summary")]
+        public IActionResult GetGymSummary(string id)
+        {
+            var summary = _gymService.GetGymSummaryById(id);
+            if (summary == null)
+                return NotFound("Gym not found.");
+
+            return Ok(summary);
         }
     }
 }

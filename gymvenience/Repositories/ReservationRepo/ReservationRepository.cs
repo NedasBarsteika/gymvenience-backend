@@ -1,6 +1,8 @@
 ﻿using gymvenience.Models;
 using gymvenience_backend;
+using gymvenience_backend.Models;
 using gymvenience_backend.Repositories.ReservationRepo;
+using Microsoft.EntityFrameworkCore;
 
 public class ReservationRepository : IReservationRepository
 {
@@ -70,6 +72,11 @@ public class ReservationRepository : IReservationRepository
     {
         return _context.Reservations.ToList();
     }
-
+    public User? GetUserById(string userId)
+    {
+        return _context.Users
+            .Include(u => u.Reservations)
+            .FirstOrDefault(u => u.Id == userId);
+    }
 
 }
