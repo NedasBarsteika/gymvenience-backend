@@ -17,5 +17,6 @@ namespace gymvenience_backend.Repositories.ReservationRepo
         Task SaveChangesAsync();
         IEnumerable<Reservation> GetReservationsByTrainer(string trainerId);
         IEnumerable<Reservation> GetAllReservations();
+        User? GetUserById(string userId);
     }
 }

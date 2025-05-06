@@ -80,6 +80,10 @@ namespace gymvenience.Repositories.GymRepo
                 .Distinct()
                 .ToListAsync();
         }
+        public Gym? GetGymById(string id)
+        {
+            return _context.Gyms.FirstOrDefault(g => g.Id == id);
+        }
     }
 
 }

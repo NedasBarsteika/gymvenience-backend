@@ -28,6 +28,11 @@ public class ReservationService : IReservationService
         if (gym == null)
             return new ReservationResult(false, "Gym not found.", null);
 
+        var user = _reservationRepository.GetUserById(dto.UserId);
+        if (user == null)
+            return new ReservationResult(false, "User not found.", null);
+
+
         var reservation = new Reservation
         {
             Id = Guid.NewGuid().ToString(),
@@ -41,6 +46,7 @@ public class ReservationService : IReservationService
 
         _reservationRepository.MarkTimeSlotReserved(slot);
         _reservationRepository.AddReservation(reservation);
+        user.Reservations.Add(reservation);
         _reservationRepository.SaveChanges();
 
         return new ReservationResult(true, "Reservation successful", reservation);
