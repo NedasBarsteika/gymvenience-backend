@@ -25,9 +25,9 @@ public class TrainerAvailabilityController : ControllerBase
 
     // GET api/traineravailability/{trainerId}?date=2025-05-05
     [HttpGet("{trainerId}/all")]
-    public IActionResult GetAllSlots(string trainerId, [FromQuery] DateTime date)
+    public IActionResult GetAllSlots(string trainerId)
     {
-        var slots = _service.GetAllSlotsForDate(trainerId, date);
+        var slots = _service.GetAllTrainerSlots(trainerId);
         return Ok(slots);
     }
 

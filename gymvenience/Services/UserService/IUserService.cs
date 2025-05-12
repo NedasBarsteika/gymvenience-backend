@@ -13,5 +13,8 @@ namespace gymvenience_backend.Services.UserService
         Task<bool> DeleteUserAsync(string userId);
         Task<IEnumerable<User>> GetAllUsersAsync();
         Task<bool> PromoteToTrainerAsync(string userId);
+        Task<IEnumerable<User>> SearchTrainersByNameAsync(string searchText);
+        Task<decimal> CalculateTrainerEarningsAsync(string trainerId);
+        Task<bool> SetHourlyRateAsync(string trainerId, decimal newRate);
     }
 }

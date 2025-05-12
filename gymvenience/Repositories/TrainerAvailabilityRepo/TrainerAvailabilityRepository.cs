@@ -18,10 +18,10 @@ namespace gymvenience.Repositories.TrainerAvailabilityRepo
             _context.TrainerAvailabilities.Add(slot);
             _context.SaveChanges();
         }
-        public IEnumerable<TrainerAvailability> GetAllTrainerSlots(string trainerId, DateTime date)
+        public IEnumerable<TrainerAvailability> GetAllTrainersSlots(string trainerId)
         {
             return _context.TrainerAvailabilities
-            .Where(a => a.TrainerId == trainerId && a.Date.Date == date.Date)
+            .Where(a => a.TrainerId == trainerId)
             .OrderBy(a => a.StartTime)
             .ToList();
         }

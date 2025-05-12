@@ -242,6 +242,54 @@ namespace gymvenience_backend.Controllers
 
             return Ok(user);
         }
+        [HttpGet("searchByName")]
+        public async Task<ActionResult<IEnumerable<TrainerSummaryDto>>> SearchTrainersByName([FromQuery(Name = "q")] string? q = null)
+        {
+            var searchText = string.IsNullOrWhiteSpace(q) ? "" : q;
+
+            var trainers = await _userService.SearchTrainersByNameAsync(searchText);
+            if (!trainers.Any())
+                return NotFound(new { message = "No matching trainers found." });
+
+            var results = trainers.Select(u => new TrainerSummaryDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Surname = u.Surname,
+                Bio = u.Bio,
+                ImageUrl = u.ImageUrl,
+                Rating = u.Rating,
+                GymName = u.Gym?.Name,
+                GymAddress = u.Gym?.Address
+            });
+
+            return Ok(results);
+        }
+        [HttpPut("{trainerid}/earnings")]
+        //[Authorize(Roles = "Trainer,Admin")]
+        public async Task<IActionResult> GetEarnings(string trainerid)
+        {
+            try
+            {
+                var amount = await _userService.CalculateTrainerEarningsAsync(trainerid);
+                return Ok(new { trainerId = trainerid, earnings = amount });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Trainer not found.");
+            }
+        }
+
+        [HttpPut("{trainerid}/hourlyRate")]
+        //[Authorize(Roles = "Trainer,Admin")]
+        public async Task<IActionResult> UpdateHourlyRate(string trainerid, [FromBody] decimal newRate)
+        {
+            var ok = await _userService.SetHourlyRateAsync(trainerid, newRate);
+            if (!ok)
+                return BadRequest("Cannot change rate while there are pending reservations.");
+            return NoContent();
+        }
+
     }
 
     public class UpdateProfileDto

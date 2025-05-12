@@ -8,6 +8,7 @@ using gymvenience_backend.Services.ProductService;
 using gymvenience_backend.Services.PasswordService;
 using Microsoft.EntityFrameworkCore;
 using gymvenience.Repositories.TrainerAvailabilityRepo;
+using gymvenience_backend.Repositories.ReservationRepo;
 
 namespace gymvenience_backend.Services.UserService
 {
@@ -19,8 +20,9 @@ namespace gymvenience_backend.Services.UserService
         private readonly IPasswordService _passwordService;
         private readonly IAuthService _authService;
         private readonly ITrainerAvailabilityRepository _trainerAvailabilityRepository;
+        private readonly IReservationRepository _reservationRepository;
 
-        public UserService(IUserRepository userRepository, IPasswordService passwordService, IAuthService authService, IProductRepository productRepository, IOrderRepository orderRepository, ITrainerAvailabilityRepository trainerRepository)
+        public UserService(IUserRepository userRepository, IPasswordService passwordService, IAuthService authService, IProductRepository productRepository, IOrderRepository orderRepository, ITrainerAvailabilityRepository trainerRepository, IReservationRepository reservationRepository)
         {
             _userRepository = userRepository;
             _productRepository = productRepository;
@@ -28,6 +30,7 @@ namespace gymvenience_backend.Services.UserService
             _passwordService = passwordService;
             _authService = authService;
             _trainerAvailabilityRepository = trainerRepository;
+            _reservationRepository = reservationRepository;
         }
 
         public async Task<(Result, User?)> CreateUserAsync(string name, string surname, string email, string password)
@@ -127,5 +130,32 @@ namespace gymvenience_backend.Services.UserService
         {
             return await _userRepository.PromoteToTrainerAsync(userId);
         }
+        // Searchas
+        public async Task<IEnumerable<User>> SearchTrainersByNameAsync(string searchText)
+        {
+            return await _userRepository.SearchTrainersByNameAsync(searchText);
+        }
+        public async Task<decimal> CalculateTrainerEarningsAsync(string trainerId)
+        {
+            // 1) Get trainer and rate
+            var trainer = await _userRepository.GetByIdAsync(trainerId);
+            if (trainer == null || !trainer.IsTrainer) throw new KeyNotFoundException();
+
+            // 2) Sum hours of completed reservations
+            var completed = _reservationRepository.GetCompletedReservationsByTrainer(trainerId);
+            double totalHours = completed.Sum(r => r.Duration.TotalHours);
+
+            return trainer.HourlyRate * (decimal)totalHours;
+        }
+
+        public async Task<bool> SetHourlyRateAsync(string trainerId, decimal newRate)
+        {
+            // Prevent if any pending bookings exist
+            var pending = _reservationRepository.GetPendingReservationsByTrainer(trainerId);
+            if (pending.Any()) return false;
+
+            return await _userRepository.UpdateHourlyRateAsync(trainerId, newRate);
+        }
+
     }
 }

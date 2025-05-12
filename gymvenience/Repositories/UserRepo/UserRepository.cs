@@ -76,6 +76,34 @@ namespace gymvenience_backend.Repositories.UserRepo
             await _context.SaveChangesAsync();
             return true;
         }
+        // Searchas
+        public async Task<IEnumerable<User>> SearchTrainersByNameAsync(string searchText)
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                return await _context.Users
+                    .Where(u => u.IsTrainer)
+                    .Include(u => u.Gym)
+                    .ToListAsync();
+            }
+
+            searchText = searchText.Trim().ToLower();
+
+            return await _context.Users
+                .Where(u => u.IsTrainer &&
+                            (u.Name.ToLower().Contains(searchText) ||
+                             u.Surname.ToLower().Contains(searchText)))
+                .Include(u => u.Gym)
+                .ToListAsync();
+        }
+        public async Task<bool> UpdateHourlyRateAsync(string trainerId, decimal newRate)
+        {
+            var trainer = await _context.Users.FindAsync(trainerId);
+            if (trainer == null || !trainer.IsTrainer) return false;
+            trainer.HourlyRate = newRate;
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
     }
 }

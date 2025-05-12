@@ -78,5 +78,14 @@ public class ReservationRepository : IReservationRepository
             .Include(u => u.Reservations)
             .FirstOrDefault(u => u.Id == userId);
     }
+    public IEnumerable<Reservation> GetCompletedReservationsByTrainer(string trainerId)
+    => _context.Reservations
+               .Where(r => r.TrainerId == trainerId && r.IsDone)
+               .ToList();
+
+    public IEnumerable<Reservation> GetPendingReservationsByTrainer(string trainerId)
+        => _context.Reservations
+                   .Where(r => r.TrainerId == trainerId && !r.IsDone)
+                   .ToList();
 
 }

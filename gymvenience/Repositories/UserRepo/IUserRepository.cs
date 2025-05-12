@@ -16,5 +16,7 @@ namespace gymvenience_backend.Repositories.UserRepo
         Task<bool> DeleteAsync(string userId);
         Task<IEnumerable<User>> GetAllAsync();
         Task<bool> PromoteToTrainerAsync(string userId);
+        Task<IEnumerable<User>> SearchTrainersByNameAsync(string searchText);
+        Task<bool> UpdateHourlyRateAsync(string trainerId, decimal newRate);
     }
 }

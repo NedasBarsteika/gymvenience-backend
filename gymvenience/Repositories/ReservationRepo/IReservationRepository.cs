@@ -18,5 +18,8 @@ namespace gymvenience_backend.Repositories.ReservationRepo
         IEnumerable<Reservation> GetReservationsByTrainer(string trainerId);
         IEnumerable<Reservation> GetAllReservations();
         User? GetUserById(string userId);
+        IEnumerable<Reservation> GetCompletedReservationsByTrainer(string trainerId);
+        IEnumerable<Reservation> GetPendingReservationsByTrainer(string trainerId);
+
     }
 }
