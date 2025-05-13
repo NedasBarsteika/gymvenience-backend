@@ -3,6 +3,7 @@ using gymvenience_backend.Repositories.ProductRepo;
 using gymvenience_backend.Repositories;
 using gymvenience_backend.Models;
 using Microsoft.EntityFrameworkCore;
+using gymvenience_backend.DTOs;
 
 namespace gymvenience_backend.Services.OrderService
 {
@@ -29,7 +30,7 @@ namespace gymvenience_backend.Services.OrderService
         }
 
         // Get orders by user ID
-        public async Task<List<Order>> GetUserOrdersAsync(string userId)
+        public async Task<List<OrderDto>> GetUserOrdersAsync(string userId)
         {
             return await _orderRepository.GetUserOrdersAsync(userId);
         }
