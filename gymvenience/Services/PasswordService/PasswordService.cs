@@ -52,15 +52,9 @@ namespace gymvenience_backend.Services.PasswordService
 
         public bool IsPasswordStrongEnough(string password)
         {
-            if (password.Length < 12)
-            {
-                return false;
-            }
-
             bool hasUppercase = false;
             bool hasLowercase = false;
             bool hasNumber = false;
-            bool hasSymbol = false;
 
             foreach (char c in password)
             {
@@ -76,13 +70,9 @@ namespace gymvenience_backend.Services.PasswordService
                 {
                     hasNumber = true;
                 }
-                else if (char.IsSymbol(c) || char.IsPunctuation(c))
-                {
-                    hasSymbol = true;
-                }
             }
 
-            return hasUppercase && hasLowercase && hasNumber && hasSymbol;
+            return hasUppercase && hasLowercase && hasNumber;
         }
     }
 }
