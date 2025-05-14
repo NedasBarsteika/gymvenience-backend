@@ -78,6 +78,10 @@ namespace gymvenience.Migrations
                     b.Property<bool>("IsDone")
                         .HasColumnType("bit");
 
+                    b.Property<decimal>("RateAtBooking")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
 

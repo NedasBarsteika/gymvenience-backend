@@ -12,8 +12,8 @@ using gymvenience_backend;
 namespace gymvenience.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250512095559_FixHourlyRatePrecision")]
-    partial class FixHourlyRatePrecision
+    [Migration("20250514151235_decimal-fix")]
+    partial class decimalfix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -80,6 +80,10 @@ namespace gymvenience.Migrations
 
                     b.Property<bool>("IsDone")
                         .HasColumnType("bit");
+
+                    b.Property<decimal>("RateAtBooking")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");

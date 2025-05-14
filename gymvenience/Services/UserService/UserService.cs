@@ -153,8 +153,8 @@ namespace gymvenience_backend.Services.UserService
         public async Task<bool> SetHourlyRateAsync(string trainerId, decimal newRate)
         {
             // Prevent if any pending bookings exist
-            var pending = _reservationRepository.GetPendingReservationsByTrainer(trainerId);
-            if (pending.Any()) return false;
+            //var pending = _reservationRepository.GetPendingReservationsByTrainer(trainerId);
+            //if (pending.Any()) return false;
 
             return await _userRepository.UpdateHourlyRateAsync(trainerId, newRate);
         }

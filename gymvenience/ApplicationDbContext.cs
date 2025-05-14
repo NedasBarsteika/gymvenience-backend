@@ -28,6 +28,10 @@ namespace gymvenience_backend
             modelBuilder.Entity<User>()
             .Property(u => u.HourlyRate)
             .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Reservation>()
+            .Property(r => r.RateAtBooking)
+            .HasPrecision(18, 2);
         }
 
         public DbSet<Product> Products { get; set; }

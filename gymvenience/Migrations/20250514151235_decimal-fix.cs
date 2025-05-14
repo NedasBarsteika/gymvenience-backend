@@ -5,7 +5,7 @@
 namespace gymvenience.Migrations
 {
     /// <inheritdoc />
-    public partial class AddRateAtBookingToReservation : Migration
+    public partial class decimalfix : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
