@@ -137,16 +137,18 @@ namespace gymvenience_backend.Services.UserService
         }
         public async Task<decimal> CalculateTrainerEarningsAsync(string trainerId)
         {
-            // 1) Get trainer and rate
             var trainer = await _userRepository.GetByIdAsync(trainerId);
-            if (trainer == null || !trainer.IsTrainer) throw new KeyNotFoundException();
+            if (trainer == null || !trainer.IsTrainer)
+                throw new KeyNotFoundException();
 
-            // 2) Sum hours of completed reservations
             var completed = _reservationRepository.GetCompletedReservationsByTrainer(trainerId);
-            double totalHours = completed.Sum(r => r.Duration.TotalHours);
 
-            return trainer.HourlyRate * (decimal)totalHours;
+            decimal total = completed
+                .Sum(r => (decimal)r.Duration.TotalHours * r.RateAtBooking);
+
+            return total;
         }
+
 
         public async Task<bool> SetHourlyRateAsync(string trainerId, decimal newRate)
         {

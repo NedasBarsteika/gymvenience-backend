@@ -1,9 +1,11 @@
-﻿using gymvenience.DTOs;
+﻿using FluentAssertions.Equivalency.Tracing;
+using gymvenience.DTOs;
 using gymvenience.Models;
 using gymvenience.Services.ReservationService;
 using gymvenience_backend.DTOs;
 using gymvenience_backend.Repositories.ReservationRepo;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class ReservationService : IReservationService
 {
@@ -32,6 +34,11 @@ public class ReservationService : IReservationService
         if (user == null)
             return new ReservationResult(false, "User not found.", null);
 
+        var trainer = _reservationRepository.GetUserById(slot.TrainerId);
+        if (trainer == null || !trainer.IsTrainer)
+            return new ReservationResult(false, "Trainer not found.", null);
+
+        decimal rate = trainer.HourlyRate;
 
         var reservation = new Reservation
         {
@@ -41,7 +48,8 @@ public class ReservationService : IReservationService
             Date = slot.Date,
             Time = slot.StartTime,
             Duration = slot.Duration,
-            GymId = dto.GymId
+            GymId = dto.GymId,
+            RateAtBooking = rate
         };
 
         _reservationRepository.MarkTimeSlotReserved(slot);
