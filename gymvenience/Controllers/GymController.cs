@@ -1,4 +1,6 @@
-﻿using gymvenience.Services.GymService;
+﻿using gymvenience.Models;
+using gymvenience.Services.GymService;
+using gymvenience_backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +15,14 @@ namespace gymvenience.Controllers
         public GymController(IGymService gymService)
         {
             _gymService = gymService;
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Gym>>> GetAllGyms()
+        {
+            var gyms = await _gymService.GetAllGymsAsync();
+            return Ok(gyms);
         }
 
         [HttpGet("cities")]

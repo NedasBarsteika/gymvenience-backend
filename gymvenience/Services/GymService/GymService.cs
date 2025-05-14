@@ -1,5 +1,7 @@
-﻿using gymvenience.Repositories.GymRepo;
+﻿using gymvenience.Models;
+using gymvenience.Repositories.GymRepo;
 using gymvenience_backend.DTOs;
+using gymvenience_backend.Models;
 
 namespace gymvenience.Services.GymService
 {
@@ -12,6 +14,10 @@ namespace gymvenience.Services.GymService
             _repository = repository;
         }
 
+        public async Task<IEnumerable<Gym>> GetAllGymsAsync()
+        {
+            return await _repository.GetAllAsync();
+        }
         public Task<List<string>> GetAllCitiesAsync() => _repository.GetAllCitiesAsync();
         public Task<List<string>> GetAllAddressesAsync() => _repository.GetAllAddressesAsync();
         public GymDto? GetGymSummaryById(string id)

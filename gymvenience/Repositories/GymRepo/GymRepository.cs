@@ -1,5 +1,6 @@
 ﻿using gymvenience.Models;
 using gymvenience_backend;
+using gymvenience_backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace gymvenience.Repositories.GymRepo
@@ -65,6 +66,11 @@ namespace gymvenience.Repositories.GymRepo
 
             _context.Gyms.AddRange(newGyms);
             _context.SaveChanges();
+        }
+
+        public async Task<IEnumerable<Gym>> GetAllAsync()
+        {
+            return await _context.Gyms.ToListAsync();
         }
 
         public async Task<List<string>> GetAllCitiesAsync()
