@@ -87,5 +87,11 @@ public class ReservationRepository : IReservationRepository
         => _context.Reservations
                    .Where(r => r.TrainerId == trainerId && !r.IsDone)
                    .ToList();
+    public async Task<Reservation?> FindBySessionIdAsync(string sessionId)
+    {
+        return await _context.Reservations
+                             .FirstOrDefaultAsync(r => r.StripeSessionId == sessionId);
+    }
+
 
 }

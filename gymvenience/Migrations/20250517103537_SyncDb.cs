@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace gymvenience.Migrations
 {
     /// <inheritdoc />
-    public partial class TrainerAvailability : Migration
+    public partial class SyncDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,11 +49,30 @@ namespace gymvenience.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    StripeSessionId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsDelivered = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TrainerAvailabilities",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TrainerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    Duration = table.Column<TimeSpan>(type: "time", nullable: false),
+                    Reserved = table.Column<bool>(type: "bit", nullable: false),
+                    GymId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrainerAvailabilities", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -92,7 +111,8 @@ namespace gymvenience.Migrations
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Rating = table.Column<float>(type: "real", nullable: false),
-                    GymId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    GymId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    HourlyRate = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -159,42 +179,17 @@ namespace gymvenience.Migrations
                     Time = table.Column<TimeSpan>(type: "time", nullable: false),
                     Duration = table.Column<TimeSpan>(type: "time", nullable: false),
                     TrainerId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GymId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    GymId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDone = table.Column<bool>(type: "bit", nullable: false),
+                    RateAtBooking = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    StripeSessionId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Reservations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Reservations_Gyms_GymId",
-                        column: x => x.GymId,
-                        principalTable: "Gyms",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_Reservations_Users_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TrainerAvailabilities",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TrainerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    Duration = table.Column<TimeSpan>(type: "time", nullable: false),
-                    Reserved = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TrainerAvailabilities", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TrainerAvailabilities_Users_TrainerId",
-                        column: x => x.TrainerId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -216,19 +211,9 @@ namespace gymvenience.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reservations_GymId",
-                table: "Reservations",
-                column: "GymId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Reservations_UserId",
                 table: "Reservations",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TrainerAvailabilities_TrainerId",
-                table: "TrainerAvailabilities",
-                column: "TrainerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_GymId",

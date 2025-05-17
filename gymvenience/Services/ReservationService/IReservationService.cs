@@ -12,5 +12,8 @@ namespace gymvenience.Services.ReservationService
         Task<bool> MarkDoneAsync(string reservationId);
         IEnumerable<Reservation> GetReservationsForTrainer(string trainerId);
         IEnumerable<Reservation> GetAllReservations();
+        Task<bool> ExistsForSessionAsync(string sessionId);
+        Task CreateReservationAsync(Reservation reservation);
+        Task<Reservation?> GetBySessionAsync(string sessionId);
     }
 }

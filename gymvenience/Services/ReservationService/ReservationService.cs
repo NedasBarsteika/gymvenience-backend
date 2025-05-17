@@ -100,4 +100,19 @@ public class ReservationService : IReservationService
         return _reservationRepository.GetAllReservations();
     }
 
+    public async Task CreateReservationAsync(Reservation reservation)
+    {
+        _reservationRepository.AddReservation(reservation);
+        await _reservationRepository.SaveChangesAsync();
+    }
+        public async Task<bool> ExistsForSessionAsync(string sessionId)
+        {
+            var existing = await _reservationRepository.FindBySessionIdAsync(sessionId);
+            return existing != null;
+        }
+
+        public async Task<Reservation?> GetBySessionAsync(string sessionId)
+        {
+            return await _reservationRepository.FindBySessionIdAsync(sessionId);
+        }
 }

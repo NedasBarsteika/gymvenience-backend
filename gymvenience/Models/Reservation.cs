@@ -11,5 +11,6 @@
         public string GymId { get; set; }  // Gym address
         public bool IsDone { get; set; } = false; // Is reservation already done flag
         public decimal RateAtBooking { get; set; } = 0m;
+        public string StripeSessionId { get; set; } = string.Empty;
     }
 }
