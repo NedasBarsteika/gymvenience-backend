@@ -294,6 +294,7 @@ namespace gymvenience_backend.Controllers
                 user.Id,
                 user.ImageUrl
             });
+        }
 
         [HttpGet("searchByName")]
         public async Task<ActionResult<IEnumerable<TrainerSummaryDto>>> SearchTrainersByName([FromQuery(Name = "q")] string? q = null)
