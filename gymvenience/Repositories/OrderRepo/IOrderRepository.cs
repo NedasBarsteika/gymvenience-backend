@@ -1,4 +1,5 @@
 ﻿using gymvenience_backend.Models;
+using gymvenience_backend.DTOs;
 
 namespace gymvenience_backend.Repositories.OrderRepo
 {
@@ -6,7 +7,7 @@ namespace gymvenience_backend.Repositories.OrderRepo
     {
         Task<Order> CreateOrderAsync(Order order);
         Task<List<Order>> GetAllOrdersAsync();
-        Task<List<Order>> GetUserOrdersAsync(string userId);
+        Task<List<OrderDto>> GetUserOrdersAsync(string userId);
         Task<Order?> GetByIdAsync(int orderId);
         Task MarkDeliveredAsync(Order order);
     }

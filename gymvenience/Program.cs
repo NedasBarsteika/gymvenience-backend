@@ -23,6 +23,7 @@ using gymvenience.Repositories.GymRepo;
 using gymvenience.Services.GymService;
 using gymvenience.Repositories.TrainerAvailabilityRepo;
 using gymvenience.Services.TrainerAvailabilityService;
+using Microsoft.Extensions.FileProviders;
 
 namespace gymvenience_backend
 {
@@ -111,6 +112,8 @@ namespace gymvenience_backend
 
 
             var app = builder.Build();
+
+            app.UseStaticFiles();
 
             var scope = app.Services.CreateScope();
             var productRepo = scope.ServiceProvider.GetRequiredService<IProductRepository>();

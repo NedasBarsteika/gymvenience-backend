@@ -1,4 +1,5 @@
 ﻿using gymvenience_backend.Models;
+using gymvenience_backend.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace gymvenience_backend.Repositories.OrderRepo
@@ -26,13 +27,27 @@ namespace gymvenience_backend.Repositories.OrderRepo
                 .ToListAsync();
         }
 
-        public async Task<List<Order>> GetUserOrdersAsync(string userId)
-        {
-            return await _context.Orders
-                .Where(o => o.UserId == userId)
-                .Include(o => o.Items) // Include OrderItems
-                .ToListAsync();
-        }
+public async Task<List<OrderDto>> GetUserOrdersAsync(string userId)
+{
+    return await _context.Orders
+        .Where(o => o.UserId == userId)
+        .Select(o => new OrderDto {
+            Id          = o.Id,
+            OrderDate   = o.OrderDate,
+            IsDelivered = o.IsDelivered,
+            Items       = o.Items.Select(i => new OrderItemDto {
+                ProductId   = i.ProductId,
+                ProductName = _context.Products
+                                       .Where(p => p.Id == i.ProductId)
+                                       .Select(p => p.Name)
+                                       .FirstOrDefault() ?? "Unknown",
+                Quantity    = i.Quantity,
+                Price   = i.Price
+            }).ToList()
+        })
+        .ToListAsync();
+}
+
         // Finds the order by its id
         public async Task<Order?> GetByIdAsync(int orderId)
         {

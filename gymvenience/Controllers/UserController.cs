@@ -8,6 +8,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using gymvenience_backend.Models;
 using Microsoft.EntityFrameworkCore;
+using gymvenience.DTOs;
 
 namespace gymvenience_backend.Controllers
 {
@@ -242,6 +243,58 @@ namespace gymvenience_backend.Controllers
 
             return Ok(user);
         }
+
+        [HttpPost("{userId}/upload-image")]
+        public async Task<IActionResult> UploadTrainerImage(
+            [FromRoute] string userId,
+            IFormFile image)
+        {
+            if (image == null || image.Length == 0)
+                return BadRequest("No file uploaded.");
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
+            var savePath = Path.Combine("wwwroot", "Images", "Trainers", fileName);
+
+            // Užtikrinkite, kad direktorija egzistuoja
+            Directory.CreateDirectory(Path.GetDirectoryName(savePath)!);
+
+            using var stream = new FileStream(savePath, FileMode.Create);
+            await image.CopyToAsync(stream);
+
+            // Grąžiname filename ir (tinkamu atveju) publiką url
+            var publicUrl = $"{Request.Scheme}://{Request.Host}/Images/Trainers/{fileName}";
+            return Ok(new { filename = fileName, url = publicUrl });
+        }
+
+
+        /// <summary>
+        /// Atnaujina vartotojo (trenerio) profilio nuotraukos URL.
+        /// </summary>
+        /// <param name="userId">Vartotojo ID path’e</param>
+        /// <param name="updateDto">DTO su ImageUrl</param>
+        [HttpPut("{userId}/image")]
+        public async Task<IActionResult> UpdateProfileImage(
+            [FromRoute] string userId,
+            [FromBody] UploadImageDto updateDto)
+        {
+            // Patikriname, ar toks vartotojas egzistuoja
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return NotFound(new { message = "Vartotojas nerastas." });
+
+            // Atnaujiname ImageUrl lauką
+            user.ImageUrl = updateDto.ImageUrl;
+
+            // Įrašome pakeitimus
+            await _context.SaveChangesAsync();
+
+            // Grąžiname atnaujintą URL
+            return Ok(new
+            {
+                user.Id,
+                user.ImageUrl
+            });
+
         [HttpGet("searchByName")]
         public async Task<ActionResult<IEnumerable<TrainerSummaryDto>>> SearchTrainersByName([FromQuery(Name = "q")] string? q = null)
         {
