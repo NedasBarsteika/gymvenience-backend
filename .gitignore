@@ -363,3 +363,9 @@ MigrationBackup/
 FodyWeavers.xsd
 /gymvenience/wwwroot/Images/Trainers/00fa0150-0115-4f34-8fb6-ef004ec716c3.jpg
 /gymvenience/wwwroot/Images/Trainers
+/gymvenience/Migrations/20250513064731_addHourlyRater.cs
+/gymvenience/Migrations/20250513064731_addHourlyRater.Designer.cs
+/gymvenience/Migrations/20250517103537_SyncDb.cs
+/gymvenience/Migrations/20250517103537_SyncDb.Designer.cs
+/gymvenience/Migrations/20250518092320_test.cs
+/gymvenience/Migrations/20250518092320_test.Designer.cs
