@@ -8,6 +8,8 @@ using gymvenience_backend.Services.ProductService;
 using gymvenience_backend.Services.PasswordService;
 using Microsoft.EntityFrameworkCore;
 using gymvenience.Repositories.TrainerAvailabilityRepo;
+using gymvenience_backend.Repositories.ReservationRepo;
+using gymvenience_backend.DTOs;
 
 namespace gymvenience_backend.Services.UserService
 {
@@ -78,7 +80,7 @@ namespace gymvenience_backend.Services.UserService
             return (Result.Success(), _authService.GenerateJwtToken(user));
         }
 
-        public async Task<(Result, List<Order>?)> GetAllOrdersAsync(string userId)
+        public async Task<(Result, List<OrderDto>?)> GetAllOrdersAsync(string userId)
         {
             // Checking if user exists
             var user = await _userRepository.GetByIdAsync(userId);
