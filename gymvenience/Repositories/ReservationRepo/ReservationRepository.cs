@@ -1,6 +1,8 @@
 ﻿using gymvenience.Models;
 using gymvenience_backend;
+using gymvenience_backend.Models;
 using gymvenience_backend.Repositories.ReservationRepo;
+using Microsoft.EntityFrameworkCore;
 
 public class ReservationRepository : IReservationRepository
 {
@@ -69,6 +71,26 @@ public class ReservationRepository : IReservationRepository
     public IEnumerable<Reservation> GetAllReservations()
     {
         return _context.Reservations.ToList();
+    }
+    public User? GetUserById(string userId)
+    {
+        return _context.Users
+            .Include(u => u.Reservations)
+            .FirstOrDefault(u => u.Id == userId);
+    }
+    public IEnumerable<Reservation> GetCompletedReservationsByTrainer(string trainerId)
+    => _context.Reservations
+               .Where(r => r.TrainerId == trainerId && r.IsDone)
+               .ToList();
+
+    public IEnumerable<Reservation> GetPendingReservationsByTrainer(string trainerId)
+        => _context.Reservations
+                   .Where(r => r.TrainerId == trainerId && !r.IsDone)
+                   .ToList();
+    public async Task<Reservation?> FindBySessionIdAsync(string sessionId)
+    {
+        return await _context.Reservations
+                             .FirstOrDefaultAsync(r => r.StripeSessionId == sessionId);
     }
 
 

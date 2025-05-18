@@ -23,7 +23,15 @@ namespace gymvenience_backend
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<User>()
+            .Property(u => u.HourlyRate)
+            .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Reservation>()
+            .Property(r => r.RateAtBooking)
+            .HasPrecision(18, 2);
         }
 
         public DbSet<Product> Products { get; set; }

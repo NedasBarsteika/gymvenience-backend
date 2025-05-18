@@ -19,9 +19,9 @@ public class TrainerAvailabilityService : ITrainerAvailabilityService
         _trainerAvailabilityRepository.AddAvailability(slot);
     }
 
-    public IEnumerable<TrainerAvailability> GetAllSlotsForDate(string trainerId, DateTime date)
+    public IEnumerable<TrainerAvailability> GetAllTrainerSlots(string trainerId)
     {
-        return _trainerAvailabilityRepository.GetAllTrainerSlots(trainerId, date);
+        return _trainerAvailabilityRepository.GetAllTrainersSlots(trainerId);
     }
     public IEnumerable<TrainerAvailability> GetAvailableSlotsForDate(string trainerId, DateTime date)
     {

@@ -1,9 +1,11 @@
-﻿using gymvenience.DTOs;
+﻿using FluentAssertions.Equivalency.Tracing;
+using gymvenience.DTOs;
 using gymvenience.Models;
 using gymvenience.Services.ReservationService;
 using gymvenience_backend.DTOs;
 using gymvenience_backend.Repositories.ReservationRepo;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class ReservationService : IReservationService
 {
@@ -28,6 +30,16 @@ public class ReservationService : IReservationService
         if (gym == null)
             return new ReservationResult(false, "Sporto salė nerasta.", null);
 
+        var user = _reservationRepository.GetUserById(dto.UserId);
+        if (user == null)
+            return new ReservationResult(false, "User not found.", null);
+
+        var trainer = _reservationRepository.GetUserById(slot.TrainerId);
+        if (trainer == null || !trainer.IsTrainer)
+            return new ReservationResult(false, "Trainer not found.", null);
+
+        decimal rate = trainer.HourlyRate;
+
         var reservation = new Reservation
         {
             Id = Guid.NewGuid().ToString(),
@@ -36,11 +48,13 @@ public class ReservationService : IReservationService
             Date = slot.Date,
             Time = slot.StartTime,
             Duration = slot.Duration,
-            GymId = dto.GymId
+            GymId = dto.GymId,
+            RateAtBooking = rate
         };
 
         _reservationRepository.MarkTimeSlotReserved(slot);
         _reservationRepository.AddReservation(reservation);
+        user.Reservations.Add(reservation);
         _reservationRepository.SaveChanges();
 
         return new ReservationResult(true, "Rezervacija sėkminga", reservation);
@@ -86,4 +100,19 @@ public class ReservationService : IReservationService
         return _reservationRepository.GetAllReservations();
     }
 
+    public async Task CreateReservationAsync(Reservation reservation)
+    {
+        _reservationRepository.AddReservation(reservation);
+        await _reservationRepository.SaveChangesAsync();
+    }
+        public async Task<bool> ExistsForSessionAsync(string sessionId)
+        {
+            var existing = await _reservationRepository.FindBySessionIdAsync(sessionId);
+            return existing != null;
+        }
+
+        public async Task<Reservation?> GetBySessionAsync(string sessionId)
+        {
+            return await _reservationRepository.FindBySessionIdAsync(sessionId);
+        }
 }

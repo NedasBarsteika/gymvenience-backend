@@ -18,6 +18,7 @@ namespace gymvenience_backend.Models
         public List<Product> PurchasedProducts { get; set; }
         public List<Reservation> Reservations { get; set; }
         public Gym? Gym { get; set; }
+        public decimal HourlyRate { get; set; } = 0m;
 
         public User()
         {

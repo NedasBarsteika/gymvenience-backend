@@ -78,6 +78,14 @@ namespace gymvenience.Migrations
                     b.Property<bool>("IsDone")
                         .HasColumnType("bit");
 
+                    b.Property<decimal>("RateAtBooking")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("StripeSessionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<TimeSpan>("Time")
                         .HasColumnType("time");
 
@@ -279,6 +287,10 @@ namespace gymvenience.Migrations
                     b.Property<string>("HashedPassword")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("HourlyRate")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()

@@ -21,8 +21,9 @@ namespace gymvenience_backend.Services.UserService
         private readonly IPasswordService _passwordService;
         private readonly IAuthService _authService;
         private readonly ITrainerAvailabilityRepository _trainerAvailabilityRepository;
+        private readonly IReservationRepository _reservationRepository;
 
-        public UserService(IUserRepository userRepository, IPasswordService passwordService, IAuthService authService, IProductRepository productRepository, IOrderRepository orderRepository, ITrainerAvailabilityRepository trainerRepository)
+        public UserService(IUserRepository userRepository, IPasswordService passwordService, IAuthService authService, IProductRepository productRepository, IOrderRepository orderRepository, ITrainerAvailabilityRepository trainerRepository, IReservationRepository reservationRepository)
         {
             _userRepository = userRepository;
             _productRepository = productRepository;
@@ -30,6 +31,7 @@ namespace gymvenience_backend.Services.UserService
             _passwordService = passwordService;
             _authService = authService;
             _trainerAvailabilityRepository = trainerRepository;
+            _reservationRepository = reservationRepository;
         }
 
         public async Task<(Result, User?)> CreateUserAsync(string name, string surname, string email, string password)
@@ -129,5 +131,34 @@ namespace gymvenience_backend.Services.UserService
         {
             return await _userRepository.PromoteToTrainerAsync(userId);
         }
+        // Searchas
+        public async Task<IEnumerable<User>> SearchTrainersByNameAsync(string searchText)
+        {
+            return await _userRepository.SearchTrainersByNameAsync(searchText);
+        }
+        public async Task<decimal> CalculateTrainerEarningsAsync(string trainerId)
+        {
+            var trainer = await _userRepository.GetByIdAsync(trainerId);
+            if (trainer == null || !trainer.IsTrainer)
+                throw new KeyNotFoundException();
+
+            var completed = _reservationRepository.GetCompletedReservationsByTrainer(trainerId);
+
+            decimal total = completed
+                .Sum(r => (decimal)r.Duration.TotalHours * r.RateAtBooking);
+
+            return total;
+        }
+
+
+        public async Task<bool> SetHourlyRateAsync(string trainerId, decimal newRate)
+        {
+            // Prevent if any pending bookings exist
+            //var pending = _reservationRepository.GetPendingReservationsByTrainer(trainerId);
+            //if (pending.Any()) return false;
+
+            return await _userRepository.UpdateHourlyRateAsync(trainerId, newRate);
+        }
+
     }
 }

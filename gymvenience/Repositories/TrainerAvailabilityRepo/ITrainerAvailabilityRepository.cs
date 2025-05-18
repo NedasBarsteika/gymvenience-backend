@@ -3,7 +3,7 @@
 public interface ITrainerAvailabilityRepository
 {
     void AddAvailability(TrainerAvailability slot);
-    IEnumerable<TrainerAvailability> GetAllTrainerSlots(string trainerId, DateTime date);
+    IEnumerable<TrainerAvailability> GetAllTrainersSlots(string trainerId);
     void DeleteAvailability(string id);
     IEnumerable<TrainerAvailability> GetAvailableTrainerSlots(string trainerId, DateTime date);
     public void UpdateSlot(TrainerAvailability slot);

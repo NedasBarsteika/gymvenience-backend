@@ -12,8 +12,8 @@ using gymvenience_backend;
 namespace gymvenience.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250422131326_test_migration")]
-    partial class test_migration
+    [Migration("20250517103537_SyncDb")]
+    partial class SyncDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -75,6 +75,17 @@ namespace gymvenience.Migrations
                         .HasColumnType("time");
 
                     b.Property<string>("GymId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDone")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("RateAtBooking")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("StripeSessionId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -176,8 +187,15 @@ namespace gymvenience.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsDelivered")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("StripeSessionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -272,6 +290,10 @@ namespace gymvenience.Migrations
                     b.Property<string>("HashedPassword")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("HourlyRate")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()

@@ -1,5 +1,6 @@
 ﻿using gymvenience.Models;
 using gymvenience_backend;
+using gymvenience_backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace gymvenience.Repositories.GymRepo
@@ -67,6 +68,11 @@ namespace gymvenience.Repositories.GymRepo
             _context.SaveChanges();
         }
 
+        public async Task<IEnumerable<Gym>> GetAllAsync()
+        {
+            return await _context.Gyms.ToListAsync();
+        }
+
         public async Task<List<string>> GetAllCitiesAsync()
         {
             return await _context.Gyms.Select(g => g.City).Distinct().ToListAsync();
@@ -79,6 +85,10 @@ namespace gymvenience.Repositories.GymRepo
                 .Select(g => g.Address)
                 .Distinct()
                 .ToListAsync();
+        }
+        public Gym? GetGymById(string id)
+        {
+            return _context.Gyms.FirstOrDefault(g => g.Id == id);
         }
     }
 
