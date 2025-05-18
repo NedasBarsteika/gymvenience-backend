@@ -35,14 +35,14 @@ namespace gymvenience_backend.Services.UserService
             // Validate password strength
             if (!_passwordService.IsPasswordStrongEnough(password))
             {
-                return (Result.Failure("Password is not strong enough. It should have upper, lower letters, numbers and special characters."), null);
+                return (Result.Failure("Slaptažodis nėra pakankamai stiprus. Jame turėtų būti didžiosios, mažosios raidės ir skaičiai"), null);
             }
 
             // Check if email is free to use
             var existingUser = await _userRepository.GetByEmailAsync(email);
             if (existingUser != null)
             {
-                return (Result.Failure("User with specified email already exists"), null);
+                return (Result.Failure("Vartotojas su šiuo el. paštu jau egzistuoja"), null);
             }
 
             // Hashing password
@@ -67,13 +67,13 @@ namespace gymvenience_backend.Services.UserService
             var user = await _userRepository.GetByEmailAsync(email);
             if (user == null)
             {
-                return (Result.Failure("User with specified email does not exist"), string.Empty);
+                return (Result.Failure("Vartotojas su šiuo el.paštu neegzistuoja"), string.Empty);
             }
 
             // Checking if password is correct
             if (!IsPasswordCorrect(password, user.HashedPassword, user.Salt))
             {
-                return (Result.Failure("Password is not correct"), string.Empty);
+                return (Result.Failure("Slaptažodis nėra teisingas"), string.Empty);
             }
             return (Result.Success(), _authService.GenerateJwtToken(user));
         }
@@ -84,7 +84,7 @@ namespace gymvenience_backend.Services.UserService
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
             {
-                return (Result.Failure("User with given id does not exist"), null);
+                return (Result.Failure("Vartotojas su šiuo id neegzistuoja"), null);
             }
 
             var userOrders = await _orderRepository.GetUserOrdersAsync(userId);
