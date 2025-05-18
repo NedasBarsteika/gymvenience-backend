@@ -39,10 +39,10 @@ namespace gymvenience_backend.Services
             // Validate product
             var product = await _productRepository.GetByIdAsync(productId);
             if (product == null)
-                throw new Exception("Product not found");
+                throw new Exception("Produktas nerastas");
 
             if (quantity > product.Quantity)
-                throw new Exception($"This product has {product.Quantity} items in stock. Please enter a valid quantity");
+                throw new Exception($"Šio produkto sandėlyje yra {product.Quantity}. Prašome įrašyti tinkamą kiekį");
 
             // Get or create cart
             var cart = await GetOrCreateCartForUserAsync(userId);
@@ -122,13 +122,13 @@ namespace gymvenience_backend.Services
                 var product = products.FirstOrDefault(p => p.Id == cartItem.ProductId);
                 if (product == null)
                 {
-                    throw new Exception($"Product {cartItem.ProductId} not found");
+                    throw new Exception($"Produktas {cartItem.ProductId} nerastas");
                 }
 
                 // Check if ordered quantity exceeds available stock
                 if (cartItem.Quantity > product.Quantity)
                 {
-                    throw new Exception($"Not enough stock for {product.Name}. Available: {product.Quantity}, Requested: {cartItem.Quantity}");
+                    throw new Exception($"Nėra pakankamai sandėlyje produkto: {product.Name}. Sandėlyje yra: {product.Quantity}, Prašoma: {cartItem.Quantity}");
                 }
 
                 // Deduct stock quantity

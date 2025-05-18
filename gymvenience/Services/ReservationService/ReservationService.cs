@@ -22,11 +22,11 @@ public class ReservationService : IReservationService
     {
         var slot = _reservationRepository.GetAvailableTimeSlot(dto.SlotId);
         if (slot == null)
-            return new ReservationResult(false, "Time slot already booked or doesn't exist.", null);
+            return new ReservationResult(false, "Laiko tarpas jau rezervuotas arba neegzistuoja.", null);
 
         var gym = _reservationRepository.GetGymById(dto.GymId);
         if (gym == null)
-            return new ReservationResult(false, "Gym not found.", null);
+            return new ReservationResult(false, "Sporto salė nerasta.", null);
 
         var reservation = new Reservation
         {
@@ -43,7 +43,7 @@ public class ReservationService : IReservationService
         _reservationRepository.AddReservation(reservation);
         _reservationRepository.SaveChanges();
 
-        return new ReservationResult(true, "Reservation successful", reservation);
+        return new ReservationResult(true, "Rezervacija sėkminga", reservation);
     }
 
     public bool CancelReservation(string reservationId)
