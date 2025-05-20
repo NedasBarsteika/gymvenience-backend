@@ -1,5 +1,6 @@
 ﻿using gymvenience.Services.TrainerAvailabilityService;
 using gymvenience_backend.DTOs;
+using gymvenience_backend.Repositories.UserRepo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 public class TrainerAvailabilityController : ControllerBase
 {
     private readonly ITrainerAvailabilityService _service;
+    private readonly IUserRepository _userRepo;
 
-    public TrainerAvailabilityController(ITrainerAvailabilityService service)
+    public TrainerAvailabilityController(ITrainerAvailabilityService service, IUserRepository userRepo)
     {
         _service = service;
+        _userRepo = userRepo;
     }
 
     // POST api/traineravailability
@@ -19,7 +22,13 @@ public class TrainerAvailabilityController : ControllerBase
     [HttpPost]
     public IActionResult AddSlot([FromBody] AvailabilityDto dto)
     {
-        _service.AddSlot(dto.TrainerId, dto.Date, dto.StartTime, dto.Duration, dto.GymId);
+        var trainer = _userRepo.GetByIdAsync(dto.TrainerId);
+        if (trainer == null)
+            return NotFound($"Trainer with id {dto.TrainerId} not found.");
+
+        var gymId = trainer.Result.Gym.Id;
+
+        _service.AddSlot(dto.TrainerId, dto.Date, dto.StartTime, dto.Duration, gymId);
         return Ok();
     }
 
