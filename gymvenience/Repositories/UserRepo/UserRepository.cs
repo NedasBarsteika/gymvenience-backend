@@ -17,6 +17,7 @@ namespace gymvenience_backend.Repositories.UserRepo
         {
             var user = await _context.Users
                              .Include(u => u.PurchasedProducts)
+                             .Include(u => u.Gym)
                              .FirstOrDefaultAsync(u => u.Id == id);
             return user;
         }
